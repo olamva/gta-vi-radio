@@ -22,10 +22,6 @@ export const Login = ({ error, onLogin }: LoginProps) => (
         <h1 className="max-w-3xl font-display text-6xl leading-[0.9] font-extrabold uppercase sm:text-8xl">
           Find your station
         </h1>
-        <p className="mt-6 max-w-xl text-lg text-pretty text-foreground/80">
-          Your Spotify history, matched to all {STATIONS.length} GTA VI
-          stations.
-        </p>
         {error && (
           <Alert variant="destructive" className="mt-6 max-w-xl">
             <AlertCircle />
