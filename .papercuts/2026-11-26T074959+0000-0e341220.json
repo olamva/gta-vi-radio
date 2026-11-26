@@ -1,0 +1,13 @@
+{
+  "id": "0e341220",
+  "ts": "2026-11-26T07:49:59+00:00",
+  "text": "shadcn add writes import { cn } from \"cn\" instead of @/lib/utils when tsconfig has paths but no baseUrl (TS 7)",
+  "tags": [
+    "tools"
+  ],
+  "who": "agent",
+  "model": "claude-opus-5-5",
+  "session": "b81d6a6a",
+  "where": "shadcn CLI",
+  "branch": "t3/weighted-radio-rankings"
+}

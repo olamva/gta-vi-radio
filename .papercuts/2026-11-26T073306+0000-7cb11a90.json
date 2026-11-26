@@ -1,0 +1,11 @@
+{
+  "id": "7cb11a90",
+  "ts": "2026-11-26T07:33:06+00:00",
+  "text": "T3 preview_snapshot fails: browser not producing screenshot frames while window hidden; preview_open open=true did not make it visible",
+  "tags": [],
+  "who": "agent",
+  "model": "claude-opus-5-5",
+  "session": "b81d6a6a",
+  "where": "/Users/olavassbotn/.t3/worktrees/gta-vi-radio/t3-32138800-550463fd8d54d9e6",
+  "branch": "t3/weighted-radio-rankings"
+}
