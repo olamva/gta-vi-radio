@@ -5,6 +5,7 @@
 
 :root {
   color-scheme: dark;
+  scrollbar-color: oklch(1 0 0 / 20%) transparent;
   --radius: 0.75rem;
   --background: oklch(0.16 0.03 300);
   --foreground: oklch(0.97 0.01 330);
