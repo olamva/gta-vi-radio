@@ -50,6 +50,7 @@ interface HitListProps {
 }
 
 const MINOR_SHARE = 0.02;
+const MIN_HIDDEN = 3;
 
 const stationStyle = (color: string) =>
   ({ "--station": color }) as CSSProperties;
@@ -132,9 +133,9 @@ const Winner = ({ ranking, profiles }: WinnerProps) => (
 
 const HitList = ({ title, hits, score, profiles }: HitListProps) => {
   const [expanded, setExpanded] = useState(false);
-  const visible = expanded
-    ? hits
-    : hits.filter(({ weight }) => weight / score >= MINOR_SHARE);
+  const major = hits.filter(({ weight }) => weight / score >= MINOR_SHARE);
+  const visible =
+    expanded || hits.length - major.length < MIN_HIDDEN ? hits : major;
   return (
     hits.length > 0 && (
       <section>
