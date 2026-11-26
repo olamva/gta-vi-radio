@@ -89,19 +89,14 @@ test("hits merge listens for one artist across spellings", () => {
 test("match labels count station and similar artists apart", () => {
   const hit = (similar: boolean) => ({ artist: "", weight: 1, similar });
   assert.deepEqual(
+    [[hit(false), hit(false), hit(true)], [hit(false)], [hit(true)], []].map(
+      matchLabel,
+    ),
     [
-      [hit(false), hit(false), hit(true)],
-      [hit(false)],
-      [hit(true)],
-      [hit(true), hit(true)],
-      [],
-    ].map(matchLabel),
-    [
-      "2 of your artists play here + 1 similar",
-      "1 of your artists plays here",
-      "1 of your artists sounds similar",
-      "2 of your artists sound similar",
-      "None of your artists play here",
+      "Plays 2 of yours · sounds like 1 more",
+      "Plays 1 of your artists",
+      "Sounds like 1 of your artists",
+      "Plays none of your artists",
     ],
   );
 });

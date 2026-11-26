@@ -51,17 +51,14 @@ export const normalize = (name: string) =>
     .replace(/^the\s+/, "")
     .replace(/[^\p{L}\p{N}]/gu, "");
 
-const artists = (count: number, verb: string) =>
-  `${count} of your artists ${verb}${count === 1 ? "s" : ""}`;
-
 export const matchLabel = (hits: Hit[]) => {
   const similar = hits.filter((hit) => hit.similar).length;
   const direct = hits.length - similar;
-  if (!direct)
-    return similar
-      ? `${artists(similar, "sound")} similar`
-      : "None of your artists play here";
-  return `${artists(direct, "play")} here${similar ? ` + ${similar} similar` : ""}`;
+  if (direct && similar)
+    return `Plays ${direct} of yours · sounds like ${similar} more`;
+  if (direct) return `Plays ${direct} of your artists`;
+  if (similar) return `Sounds like ${similar} of your artists`;
+  return "Plays none of your artists";
 };
 
 const decay = (index: number, length: number) => 1 - index / length;
