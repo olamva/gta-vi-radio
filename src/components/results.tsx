@@ -8,6 +8,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ProfileAvatar } from "@/components/profile-avatar";
+import { ShareButton } from "@/components/share-button";
 import { SpotifyIcon } from "@/components/spotify-icon";
 import { StationArt } from "@/components/station-art";
 import {
@@ -256,6 +257,11 @@ export const Results = ({ rankings, profiles }: ResultsProps) => {
   const visible = expanded ? rankings : matched;
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+      {matched.length > 0 && (
+        <div className="flex justify-end">
+          <ShareButton rankings={rankings} profiles={profiles} />
+        </div>
+      )}
       {!matched.length && (
         <p className="py-14 text-lg text-muted-foreground">
           None of your top artists play on a GTA VI station yet.

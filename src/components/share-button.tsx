@@ -1,0 +1,145 @@
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Dialog } from "radix-ui";
+import { Check, Copy, Download, Link, Share, Share2, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { Ranking } from "@/match.ts";
+import { canShare, isTouch, renderCard, shareData } from "@/share.ts";
+import type { Profiles } from "@/spotify.ts";
+
+interface ShareButtonProps {
+  rankings: Ranking[];
+  profiles: Profiles;
+}
+
+interface ActionProps {
+  icon: ReactNode;
+  children: ReactNode;
+  href?: string;
+  download?: string;
+  onClick?: () => void;
+}
+
+const Action = ({ icon, children, href, download, onClick }: ActionProps) => {
+  const className =
+    "h-auto flex-col gap-1.5 rounded-sm px-2 py-3 text-xs [&_svg:not([class*='size-'])]:size-5";
+  return href ? (
+    <Button asChild variant="secondary" className={className}>
+      <a
+        href={href}
+        download={download}
+        target={download ? undefined : "_blank"}
+        rel="noreferrer"
+      >
+        {icon}
+        {children}
+      </a>
+    </Button>
+  ) : (
+    <Button variant="secondary" className={className} onClick={onClick}>
+      {icon}
+      {children}
+    </Button>
+  );
+};
+
+export const ShareButton = ({ rankings, profiles }: ShareButtonProps) => {
+  const [card, setCard] = useState<File>();
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState<string>();
+  const preview = useMemo(() => card && URL.createObjectURL(card), [card]);
+  useEffect(() => {
+    renderCard(
+      rankings.filter(({ hits }) => hits.length),
+      profiles,
+    ).then(setCard);
+  }, [rankings, profiles]);
+
+  const data = card && shareData(card, rankings[0].station.name);
+  const share = () =>
+    data &&
+    (isTouch() && canShare(data)
+      ? navigator.share(data).catch(() => undefined)
+      : setOpen(true));
+  const copy = async (label: string, write: () => Promise<void>) => {
+    await write();
+    setCopied(label);
+    setTimeout(() => setCopied(undefined), 2000);
+  };
+  const copyIcon = (label: string, icon: ReactNode) =>
+    copied === label ? <Check /> : icon;
+
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Button variant="outline" disabled={!card} onClick={share}>
+        <Share2 />
+        Share my results
+      </Button>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100vh-2rem)] w-min max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 gap-5 overflow-y-auto bg-card p-6 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95">
+          <div className="pr-10">
+            <Dialog.Title className="font-display text-3xl leading-none font-black uppercase">
+              Share my results
+            </Dialog.Title>
+            <Dialog.Description className="mt-2 text-sm text-muted-foreground">
+              Send the card with the site link. Your friends can then find their
+              own station.
+            </Dialog.Description>
+          </div>
+          <img
+            src={preview}
+            alt="Your GTA VI Radio Match card"
+            className="w-[min(26rem,48vh,calc(100vw-5rem))] max-w-none"
+          />
+          {card && preview && (
+            <div className="grid auto-cols-fr grid-flow-col gap-2">
+              <Action
+                icon={copyIcon("image", <Copy />)}
+                onClick={() =>
+                  copy("image", () =>
+                    navigator.clipboard.write([
+                      new ClipboardItem({ [card.type]: card }),
+                    ]),
+                  )
+                }
+              >
+                {copied === "image" ? "Copied" : "Copy image"}
+              </Action>
+              <Action icon={<Download />} href={preview} download={card.name}>
+                Download image
+              </Action>
+              <Action
+                icon={copyIcon("link", <Link />)}
+                onClick={() =>
+                  copy("link", () =>
+                    navigator.clipboard.writeText(location.origin),
+                  )
+                }
+              >
+                {copied === "link" ? "Copied" : "Copy site link"}
+              </Action>
+              {data && canShare(data) && (
+                <Action
+                  icon={<Share />}
+                  onClick={() => navigator.share(data).catch(() => undefined)}
+                >
+                  More options
+                </Action>
+              )}
+            </div>
+          )}
+          <Dialog.Close asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Close"
+              className="absolute top-4 right-4 text-muted-foreground"
+            >
+              <X />
+            </Button>
+          </Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};

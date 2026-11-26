@@ -71,6 +71,10 @@
   .font-display {
     word-spacing: 0.12em;
   }
+
+  html body[data-scroll-locked] {
+    margin-right: 0 !important;
+  }
 }
 
 ::view-transition-group(*) {
