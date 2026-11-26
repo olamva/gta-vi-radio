@@ -49,6 +49,8 @@ interface HitListProps {
   profiles: Profiles;
 }
 
+const MINOR_SHARE = 0.02;
+
 const stationStyle = (color: string) =>
   ({ "--station": color }) as CSSProperties;
 
@@ -128,41 +130,58 @@ const Winner = ({ ranking, profiles }: WinnerProps) => (
   </section>
 );
 
-const HitList = ({ title, hits, score, profiles }: HitListProps) =>
-  hits.length > 0 && (
-    <section>
-      <h4 className="text-xs font-medium tracking-[0.15em] text-muted-foreground uppercase">
-        {title}
-      </h4>
-      <ul className="mt-3 grid gap-2.5">
-        {hits.map(({ artist, weight }) => (
-          <li
-            key={artist}
-            className="grid grid-cols-[minmax(0,1fr)_minmax(4rem,40%)] items-center gap-4"
-          >
-            <a
-              href={profiles.get(normalize(artist))?.url}
-              target="_blank"
-              rel="noreferrer"
-              className="flex min-w-0 items-center gap-3 rounded-full hover:underline"
+const HitList = ({ title, hits, score, profiles }: HitListProps) => {
+  const [expanded, setExpanded] = useState(false);
+  const visible = expanded
+    ? hits
+    : hits.filter(({ weight }) => weight / score >= MINOR_SHARE);
+  return (
+    hits.length > 0 && (
+      <section>
+        <h4 className="text-xs font-medium tracking-[0.15em] text-muted-foreground uppercase">
+          {title}
+        </h4>
+        <ul className="mt-3 grid gap-2.5">
+          {visible.map(({ artist, weight }) => (
+            <li
+              key={artist}
+              className="grid grid-cols-[minmax(0,1fr)_minmax(4rem,40%)] items-center gap-4"
             >
-              <ArtistAvatar
-                artist={artist}
-                profiles={profiles}
-                className="size-8"
+              <a
+                href={profiles.get(normalize(artist))?.url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-w-0 items-center gap-3 rounded-full hover:underline"
+              >
+                <ArtistAvatar
+                  artist={artist}
+                  profiles={profiles}
+                  className="size-8"
+                />
+                <span className="truncate text-sm font-medium">{artist}</span>
+              </a>
+              <Progress
+                value={(weight / score) * 100}
+                aria-label={`${artist}'s part of this match`}
+                className="h-1.5 bg-white/10 *:data-[slot=progress-indicator]:bg-[var(--station)]"
               />
-              <span className="truncate text-sm font-medium">{artist}</span>
-            </a>
-            <Progress
-              value={(weight / score) * 100}
-              aria-label={`${artist}'s part of this match`}
-              className="h-1.5 bg-white/10 *:data-[slot=progress-indicator]:bg-[var(--station)]"
-            />
-          </li>
-        ))}
-      </ul>
-    </section>
+            </li>
+          ))}
+        </ul>
+        {visible.length < hits.length && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3 w-full"
+            onClick={() => setExpanded(true)}
+          >
+            Show {hits.length - visible.length} more artists
+          </Button>
+        )}
+      </section>
+    )
   );
+};
 
 const Row = ({ ranking, rank, profiles }: RowProps) => {
   const { station, hits, score } = ranking;
