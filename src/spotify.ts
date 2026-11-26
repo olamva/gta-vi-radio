@@ -100,11 +100,15 @@ const accessToken = async (force = false) => {
   return (await refreshing).accessToken;
 };
 
-const api = async <T>(path: string, retry = true): Promise<T> => {
+const api = async <T>(path: string, retry = true, attempt = 0): Promise<T> => {
   const response = await fetch(`https://api.spotify.com/v1/${path}`, {
     headers: { Authorization: `Bearer ${await accessToken(!retry)}` },
   });
-  if (response.status === 401 && retry) return api(path, false);
+  if (response.status === 401 && retry) return api(path, false, attempt);
+  if (response.status >= 500 && attempt < 3) {
+    await new Promise((resolve) => setTimeout(resolve, 500 * 2 ** attempt));
+    return api(path, retry, attempt + 1);
+  }
   if (response.status === 403)
     throw new SpotifyError(
       "This Spotify account is not on the app's user list yet. Ask the site owner to add it.",
