@@ -82,7 +82,7 @@ export const App = () => {
               className={state.status === "login" ? "h-16 sm:h-20" : "h-9"}
             />
             <span
-              className={`font-display font-bold tracking-wide uppercase ${state.status === "login" ? "text-2xl sm:text-3xl" : "text-xl"}`}
+              className={`font-display font-black uppercase ${state.status === "login" ? "text-2xl sm:text-3xl" : "text-xl"}`}
             >
               Radio Match
             </span>

@@ -82,10 +82,10 @@ const Winner = ({ ranking, profiles }: WinnerProps) => (
       className="w-full max-w-72 shadow-2xl shadow-black/50"
     />
     <div>
-      <p className="text-sm font-medium tracking-[0.2em] text-muted-foreground uppercase">
+      <p className="font-display text-2xl font-bold text-sunset uppercase">
         Your station
       </p>
-      <h1 className="mt-2 font-display text-6xl leading-[0.9] font-extrabold uppercase sm:text-8xl">
+      <h1 className="mt-2 font-display text-5xl leading-[0.85] font-black uppercase sm:text-8xl">
         {ranking.station.name}
       </h1>
       <ul className="mt-6 flex flex-wrap gap-2">
@@ -138,7 +138,7 @@ const HitList = ({ title, hits, score, profiles }: HitListProps) => {
   return (
     hits.length > 0 && (
       <section>
-        <h4 className="text-xs font-medium tracking-[0.15em] text-muted-foreground uppercase">
+        <h4 className="font-display text-base font-bold text-muted-foreground uppercase">
           {title}
         </h4>
         <ul className="mt-3 flex flex-wrap gap-2">
@@ -268,7 +268,7 @@ export const Results = ({ rankings, profiles }: ResultsProps) => {
         </p>
       )}
       <section>
-        <h2 className="font-display text-3xl font-bold uppercase">
+        <h2 className="font-display text-3xl font-black uppercase">
           All stations
         </h2>
         <ol className="mt-6 grid gap-3">
