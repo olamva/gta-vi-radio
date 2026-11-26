@@ -7,7 +7,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Progress } from "@/components/ui/progress";
 import { SpotifyIcon } from "@/components/spotify-icon";
 import { StationArt } from "@/components/station-art";
 import {
@@ -81,7 +80,7 @@ const ShowMore = ({ children, onClick }: ShowMoreProps) => (
   <button
     type="button"
     onClick={onClick}
-    className="mt-3 cursor-pointer font-display text-lg font-bold text-muted-foreground uppercase transition-colors hover:text-foreground"
+    className="cursor-pointer font-display text-lg font-bold text-muted-foreground uppercase transition-colors hover:text-foreground"
   >
     + {children}
   </button>
@@ -145,38 +144,32 @@ const HitList = ({ title, hits, score, profiles }: HitListProps) => {
         <h4 className="font-display text-base font-bold text-muted-foreground uppercase">
           {title}
         </h4>
-        <ul className="mt-3 grid gap-2.5">
-          {visible.map(({ artist, weight }) => (
-            <li
-              key={artist}
-              className="grid grid-cols-[minmax(0,1fr)_minmax(4rem,40%)] items-center gap-4"
-            >
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {visible.map(({ artist }) => (
+            <li key={artist} className="min-w-0">
               <a
                 href={profiles.get(normalize(artist))?.url}
                 target="_blank"
                 rel="noreferrer"
-                className="flex min-w-0 items-center gap-3 hover:underline"
+                className="flex h-9 min-w-0 items-center gap-2.5 bg-white/5 pr-3 transition-colors hover:bg-white/10"
               >
                 <ArtistAvatar
                   artist={artist}
                   profiles={profiles}
-                  className="size-8 rounded-none"
+                  className="size-9 rounded-none"
                 />
                 <span className="truncate text-sm font-medium">{artist}</span>
               </a>
-              <Progress
-                value={(weight / score) * 100}
-                aria-label={`${artist}'s part of this match`}
-                className="h-2 rounded-none bg-white/10 *:data-[slot=progress-indicator]:bg-[var(--station)]"
-              />
             </li>
           ))}
+          {visible.length < hits.length && (
+            <li className="flex items-center px-1">
+              <ShowMore onClick={() => setExpanded(true)}>
+                {hits.length - visible.length} more
+              </ShowMore>
+            </li>
+          )}
         </ul>
-        {visible.length < hits.length && (
-          <ShowMore onClick={() => setExpanded(true)}>
-            {hits.length - visible.length} more artists
-          </ShowMore>
-        )}
       </section>
     )
   );
@@ -265,7 +258,7 @@ export const Results = ({ rankings, profiles }: ResultsProps) => {
         <h2 className="font-display text-3xl font-black uppercase">
           All stations
         </h2>
-        <ol className="mt-4 border-t border-white/15">
+        <ol className="mt-4 mb-3 border-t border-white/15">
           {visible.map((ranking, index) => (
             <Row
               key={ranking.station.name}
