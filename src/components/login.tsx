@@ -19,15 +19,12 @@ export const Login = ({ error, onLogin }: LoginProps) => (
       </picture>
       <div className="absolute inset-0 -z-10 bg-linear-to-b from-background/40 via-background/55 to-background" />
       <div className="mx-auto w-full max-w-6xl px-4 pt-32 pb-16 sm:px-6 sm:pb-24">
-        <p className="mb-4 text-sm font-medium tracking-[0.2em] text-muted-foreground uppercase">
-          {STATIONS.length} stations · Leonida
-        </p>
         <h1 className="max-w-3xl font-display text-6xl leading-[0.9] font-extrabold uppercase sm:text-8xl">
           Find your station
         </h1>
         <p className="mt-6 max-w-xl text-lg text-pretty text-foreground/80">
-          Connect Spotify and we rank every GTA VI music station by your top
-          artists and tracks. Your last month counts most.
+          Your Spotify history, matched to all {STATIONS.length} GTA VI
+          stations.
         </p>
         {error && (
           <Alert variant="destructive" className="mt-6 max-w-xl">
@@ -35,19 +32,14 @@ export const Login = ({ error, onLogin }: LoginProps) => (
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <Button
-            size="lg"
-            onClick={onLogin}
-            className="h-12 rounded-full bg-spotify px-7 text-base font-semibold text-black hover:bg-spotify/90"
-          >
-            <SpotifyIcon className="size-5" />
-            Log in with Spotify
-          </Button>
-          <p className="text-sm text-muted-foreground">
-            Your history stays in your browser.
-          </p>
-        </div>
+        <Button
+          size="lg"
+          onClick={onLogin}
+          className="mt-8 h-12 rounded-full bg-spotify px-7 text-base font-semibold text-black hover:bg-spotify/90"
+        >
+          <SpotifyIcon className="size-5" />
+          Log in with Spotify
+        </Button>
       </div>
     </section>
     <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">

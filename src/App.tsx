@@ -12,13 +12,14 @@ import {
   listeningHistory,
   login,
   logout,
+  type Profiles,
 } from "@/spotify.ts";
 import { STATIONS } from "@/stations.ts";
 
 type State =
   | { status: "login"; error?: string }
   | { status: "loading" }
-  | { status: "done"; rankings: Ranking[] };
+  | { status: "done"; rankings: Ranking[]; profiles: Profiles };
 
 const loadRankings = async (): Promise<State> => {
   if (!hasClientId())
@@ -26,9 +27,11 @@ const loadRankings = async (): Promise<State> => {
   try {
     await completeLogin();
     if (!isLoggedIn()) return { status: "login" };
+    const { history, profiles } = await listeningHistory();
     return {
       status: "done",
-      rankings: rankStations(weighHistory(await listeningHistory()), STATIONS),
+      rankings: rankStations(weighHistory(history), STATIONS),
+      profiles,
     };
   } catch (error) {
     return {
@@ -90,7 +93,9 @@ export const App = () => {
           <Login error={state.error} onLogin={login} />
         )}
         {state.status === "loading" && <Loading />}
-        {state.status === "done" && <Results rankings={state.rankings} />}
+        {state.status === "done" && (
+          <Results rankings={state.rankings} profiles={state.profiles} />
+        )}
       </main>
     </>
   );
