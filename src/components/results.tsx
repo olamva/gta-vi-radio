@@ -1,33 +1,35 @@
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { SpotifyIcon } from "@/components/spotify-icon";
 import { StationArt } from "@/components/station-art";
-import { playlistUrl, type Ranking } from "@/match.ts";
+import { normalize, playlistUrl, type Ranking } from "@/match.ts";
+import type { Profiles } from "@/spotify.ts";
 
 interface ResultsProps {
   rankings: Ranking[];
+  profiles: Profiles;
 }
 
 interface WinnerProps {
   ranking: Ranking;
+  profiles: Profiles;
 }
 
 interface RowProps {
   ranking: Ranking;
   rank: number;
-  top: number;
 }
 
-const percent = (share: number) => `${Math.round(share * 100)}%`;
+const percentOf = (share: number) => Math.round(share * 100);
 
 const stationStyle = (color: string) =>
   ({ "--station": color }) as CSSProperties;
 
-const Winner = ({ ranking }: WinnerProps) => (
+const Winner = ({ ranking, profiles }: WinnerProps) => (
   <section
     style={stationStyle(ranking.station.color)}
     className="grid gap-8 pt-6 pb-14 md:grid-cols-[minmax(0,280px)_1fr] md:items-end"
@@ -43,16 +45,29 @@ const Winner = ({ ranking }: WinnerProps) => (
       <h1 className="mt-2 font-display text-6xl leading-[0.9] font-extrabold uppercase sm:text-8xl">
         {ranking.station.name}
       </h1>
-      <p className="mt-4 max-w-xl text-lg text-foreground/80">
-        {ranking.station.blurb}
-      </p>
-      <div className="mt-5 flex flex-wrap gap-2">
-        {ranking.matches.slice(0, 6).map((artist) => (
-          <Badge key={artist} variant="outline" className="px-2.5 py-1">
-            {artist}
-          </Badge>
-        ))}
-      </div>
+      <ul className="mt-6 flex flex-wrap gap-2">
+        {ranking.matches.slice(0, 8).map((artist) => {
+          const profile = profiles.get(normalize(artist));
+          return (
+            <li key={artist}>
+              <a
+                href={profile?.url}
+                target="_blank"
+                rel="noreferrer"
+                title={artist}
+                className="block rounded-full ring-offset-2 ring-offset-background transition hover:ring-2 hover:ring-[var(--station)]"
+              >
+                <Avatar className="size-12">
+                  <AvatarImage src={profile?.image} alt={artist} />
+                  <AvatarFallback className="font-semibold">
+                    {artist.slice(0, 1)}
+                  </AvatarFallback>
+                </Avatar>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
       <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
         <Button
           asChild
@@ -69,14 +84,14 @@ const Winner = ({ ranking }: WinnerProps) => (
           </a>
         </Button>
         <p className="text-sm text-muted-foreground">
-          Covers {percent(ranking.share)} of your listening
+          {percentOf(ranking.share)}% of your listening
         </p>
       </div>
     </div>
   </section>
 );
 
-const Row = ({ ranking, rank, top }: RowProps) => (
+const Row = ({ ranking, rank }: RowProps) => (
   <li style={stationStyle(ranking.station.color)}>
     <Card className="gap-0 py-0 transition-colors hover:border-[var(--station)]/60 hover:bg-accent/60">
       <a
@@ -94,17 +109,15 @@ const Row = ({ ranking, rank, top }: RowProps) => (
             {ranking.station.name}
           </h3>
           <p className="truncate text-sm text-muted-foreground">
-            {ranking.matches.length
-              ? ranking.matches.slice(0, 4).join(", ")
-              : ranking.station.blurb}
+            {ranking.matches.slice(0, 4).join(", ")}
           </p>
         </div>
         <div className="col-span-full flex items-center gap-3 sm:col-span-1">
           <span className="w-10 text-right text-sm font-semibold tabular-nums">
-            {percent(ranking.share)}
+            {percentOf(ranking.share)}%
           </span>
           <Progress
-            value={top ? (ranking.score / top) * 100 : 0}
+            value={percentOf(ranking.share)}
             className="bg-white/10 *:data-[slot=progress-indicator]:bg-[var(--station)]"
           />
         </div>
@@ -117,37 +130,42 @@ const Row = ({ ranking, rank, top }: RowProps) => (
   </li>
 );
 
-export const Results = ({ rankings }: ResultsProps) => {
+export const Results = ({ rankings, profiles }: ResultsProps) => {
+  const [expanded, setExpanded] = useState(false);
   const [best] = rankings;
+  const matched = rankings.filter(({ share }) => percentOf(share) > 0);
+  const visible = expanded ? rankings : matched;
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
       {best.score ? (
-        <Winner ranking={best} />
+        <Winner ranking={best} profiles={profiles} />
       ) : (
         <p className="py-14 text-lg text-muted-foreground">
           None of your top artists play on a GTA VI station yet.
         </p>
       )}
       <section>
-        <div className="flex flex-wrap items-end justify-between gap-2">
-          <h2 className="font-display text-3xl font-bold uppercase">
-            All stations
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Share of your weighted listening. Select a station to open its
-            playlist.
-          </p>
-        </div>
+        <h2 className="font-display text-3xl font-bold uppercase">
+          All stations
+        </h2>
         <ol className="mt-6 grid gap-3">
-          {rankings.map((ranking, index) => (
+          {visible.map((ranking, index) => (
             <Row
               key={ranking.station.name}
               ranking={ranking}
               rank={index + 1}
-              top={best.score}
             />
           ))}
         </ol>
+        {visible.length < rankings.length && (
+          <Button
+            variant="outline"
+            className="mt-4 w-full"
+            onClick={() => setExpanded(true)}
+          >
+            Show {rankings.length - visible.length} more stations
+          </Button>
+        )}
       </section>
     </div>
   );
