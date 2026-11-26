@@ -12,13 +12,23 @@ interface LoginProps {
 
 export const Login = ({ error, onLogin }: LoginProps) => (
   <>
-    <section className="relative isolate flex min-h-[86svh] items-end overflow-hidden">
+    <section className="relative isolate flex min-h-[86svh] flex-col overflow-hidden">
       <picture className="absolute inset-0 -z-10">
         <source media="(max-width: 767px)" srcSet="/hero-mobile.webp" />
         <img src="/hero.webp" alt="" className="size-full object-cover" />
       </picture>
       <div className="absolute inset-0 -z-10 bg-linear-to-b from-background/40 via-background/55 to-background" />
-      <div className="mx-auto w-full max-w-6xl px-4 pt-40 pb-16 sm:pt-64 sm:px-6 sm:pb-24">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-5 pb-16 sm:px-6 sm:pb-24">
+        <a href="/" className="my-auto flex items-center gap-3 py-8 sm:gap-5">
+          <img
+            src="/favicon.svg"
+            alt="Grand Theft Auto VI"
+            className="h-28 sm:h-48 xl:tall:h-72"
+          />
+          <span className="font-display text-3xl font-black uppercase sm:text-6xl xl:tall:text-8xl">
+            Radio Match
+          </span>
+        </a>
         <h1 className="max-w-3xl font-display text-6xl leading-[0.85] font-black uppercase sm:text-8xl">
           Find your station
         </h1>
@@ -31,7 +41,7 @@ export const Login = ({ error, onLogin }: LoginProps) => (
         <Button
           size="lg"
           onClick={onLogin}
-          className="mt-8 h-12 rounded-full bg-spotify px-7 text-base font-semibold text-black hover:bg-spotify/90"
+          className="mt-8 h-12 self-start rounded-full bg-spotify px-7 text-base font-semibold text-black hover:bg-spotify/90"
         >
           <SpotifyIcon className="size-5" />
           Log in with Spotify

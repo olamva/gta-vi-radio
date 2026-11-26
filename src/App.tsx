@@ -81,44 +81,44 @@ export const App = () => {
 
   return (
     <>
-      <header className="absolute inset-x-0 top-0 z-10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
-          <a href="/" className="flex items-center gap-3">
-            <img
-              src="/favicon.svg"
-              alt="Grand Theft Auto VI"
-              className={state.status === "login" ? "h-28 sm:h-48" : "h-9"}
-            />
-            <span
-              className={`font-display font-black uppercase ${state.status === "login" ? "text-3xl sm:text-6xl" : "text-xl"}`}
-            >
-              Radio Match
-            </span>
-          </a>
-          {state.status === "done" && (
-            <div className="flex items-center gap-2">
-              <a
-                href={state.account.url}
-                target="_blank"
-                rel="noreferrer"
-                title="Open your Spotify profile"
-                className="flex items-center gap-2.5 text-sm font-medium transition hover:opacity-75"
-              >
-                <ProfileAvatar
-                  name={state.account.name}
-                  image={state.account.image}
-                />
-                <span className="hidden max-w-40 truncate sm:block">
-                  {state.account.name}
-                </span>
-              </a>
-              <Button variant="ghost" size="sm" onClick={signOut}>
-                Log out
-              </Button>
-            </div>
-          )}
-        </div>
-      </header>
+      {state.status !== "login" && (
+        <header className="absolute inset-x-0 top-0 z-10">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
+            <a href="/" className="flex items-center gap-3">
+              <img
+                src="/favicon.svg"
+                alt="Grand Theft Auto VI"
+                className="h-9"
+              />
+              <span className="font-display text-xl font-black uppercase">
+                Radio Match
+              </span>
+            </a>
+            {state.status === "done" && (
+              <div className="flex items-center gap-2">
+                <a
+                  href={state.account.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Open your Spotify profile"
+                  className="flex items-center gap-2.5 text-sm font-medium transition hover:opacity-75"
+                >
+                  <ProfileAvatar
+                    name={state.account.name}
+                    image={state.account.image}
+                  />
+                  <span className="hidden max-w-40 truncate sm:block">
+                    {state.account.name}
+                  </span>
+                </a>
+                <Button variant="ghost" size="sm" onClick={signOut}>
+                  Log out
+                </Button>
+              </div>
+            )}
+          </div>
+        </header>
+      )}
       <main className={state.status === "login" ? "" : "pt-20"}>
         {state.status === "login" && (
           <Login error={state.error} onLogin={login} />
