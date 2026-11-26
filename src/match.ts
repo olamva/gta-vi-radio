@@ -23,11 +23,13 @@ export type History = {
 
 export type Listen = { artist: string; weight: number };
 
+export type Hit = { artist: string; weight: number; similar: boolean };
+
 export type Ranking = {
   station: Station;
   score: number;
   share: number;
-  matches: string[];
+  hits: Hit[];
 };
 
 export const RANGE_WEIGHTS: Record<Range, number> = {
@@ -48,6 +50,19 @@ export const normalize = (name: string) =>
     .replace(/&/g, "and")
     .replace(/^the\s+/, "")
     .replace(/[^\p{L}\p{N}]/gu, "");
+
+const artists = (count: number, verb: string) =>
+  `${count} of your artists ${verb}${count === 1 ? "s" : ""}`;
+
+export const matchLabel = (hits: Hit[]) => {
+  const similar = hits.filter((hit) => hit.similar).length;
+  const direct = hits.length - similar;
+  if (!direct)
+    return similar
+      ? `${artists(similar, "sound")} similar`
+      : "None of your artists play here";
+  return `${artists(direct, "play")} here${similar ? ` + ${similar} similar` : ""}`;
+};
 
 const decay = (index: number, length: number) => 1 - index / length;
 
@@ -95,19 +110,14 @@ export const rankStations = (
       const hits = [...weights]
         .flatMap(([key, { artist, weight }]) =>
           direct.has(key)
-            ? [{ artist, weight }]
+            ? [{ artist, weight, similar: false }]
             : similar.has(key)
-              ? [{ artist, weight: weight * SIMILAR_WEIGHT }]
+              ? [{ artist, weight: weight * SIMILAR_WEIGHT, similar: true }]
               : [],
         )
         .sort((a, b) => b.weight - a.weight);
       const score = hits.reduce((sum, { weight }) => sum + weight, 0);
-      return {
-        station,
-        score,
-        share: total ? score / total : 0,
-        matches: hits.map(({ artist }) => artist),
-      };
+      return { station, score, share: total ? score / total : 0, hits };
     })
     .sort((a, b) => b.score - a.score);
 };

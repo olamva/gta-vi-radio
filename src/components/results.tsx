@@ -1,12 +1,23 @@
 import { useState, type CSSProperties } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Progress } from "@/components/ui/progress";
 import { SpotifyIcon } from "@/components/spotify-icon";
 import { StationArt } from "@/components/station-art";
-import { normalize, playlistUrl, type Ranking } from "@/match.ts";
+import {
+  matchLabel,
+  normalize,
+  playlistUrl,
+  type Hit,
+  type Ranking,
+} from "@/match.ts";
 import type { Profiles } from "@/spotify.ts";
 
 interface ResultsProps {
@@ -22,19 +33,42 @@ interface WinnerProps {
 interface RowProps {
   ranking: Ranking;
   rank: number;
+  profiles: Profiles;
 }
 
-const percentOf = (share: number) => Math.round(share * 100);
+interface ArtistAvatarProps {
+  artist: string;
+  profiles: Profiles;
+  className?: string;
+}
+
+interface HitListProps {
+  title: string;
+  hits: Hit[];
+  score: number;
+  profiles: Profiles;
+}
 
 const stationStyle = (color: string) =>
   ({ "--station": color }) as CSSProperties;
 
-const featured = (matches: string[], profiles: Profiles) => {
-  const pictured = matches.filter(
-    (artist) => profiles.get(normalize(artist))?.image,
+const featured = (hits: Hit[], profiles: Profiles, count: number) => {
+  const pictured = hits.filter(
+    ({ artist }) => profiles.get(normalize(artist))?.image,
   );
-  return (pictured.length >= 4 ? pictured : matches).slice(0, 8);
+  return (pictured.length >= 4 ? pictured : hits)
+    .slice(0, count)
+    .map(({ artist }) => artist);
 };
+
+const ArtistAvatar = ({ artist, profiles, className }: ArtistAvatarProps) => (
+  <Avatar className={className}>
+    <AvatarImage src={profiles.get(normalize(artist))?.image} alt={artist} />
+    <AvatarFallback className="font-semibold">
+      {artist.slice(0, 1)}
+    </AvatarFallback>
+  </Avatar>
+);
 
 const Winner = ({ ranking, profiles }: WinnerProps) => (
   <section
@@ -53,27 +87,23 @@ const Winner = ({ ranking, profiles }: WinnerProps) => (
         {ranking.station.name}
       </h1>
       <ul className="mt-6 flex flex-wrap gap-2">
-        {featured(ranking.matches, profiles).map((artist) => {
-          const profile = profiles.get(normalize(artist));
-          return (
-            <li key={artist}>
-              <a
-                href={profile?.url}
-                target="_blank"
-                rel="noreferrer"
-                title={artist}
-                className="block rounded-full ring-offset-2 ring-offset-background transition hover:ring-2 hover:ring-[var(--station)]"
-              >
-                <Avatar className="size-12">
-                  <AvatarImage src={profile?.image} alt={artist} />
-                  <AvatarFallback className="font-semibold">
-                    {artist.slice(0, 1)}
-                  </AvatarFallback>
-                </Avatar>
-              </a>
-            </li>
-          );
-        })}
+        {featured(ranking.hits, profiles, 8).map((artist) => (
+          <li key={artist}>
+            <a
+              href={profiles.get(normalize(artist))?.url}
+              target="_blank"
+              rel="noreferrer"
+              title={artist}
+              className="block rounded-full ring-offset-2 ring-offset-background transition hover:ring-2 hover:ring-[var(--station)]"
+            >
+              <ArtistAvatar
+                artist={artist}
+                profiles={profiles}
+                className="size-12"
+              />
+            </a>
+          </li>
+        ))}
       </ul>
       <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
         <Button
@@ -91,56 +121,129 @@ const Winner = ({ ranking, profiles }: WinnerProps) => (
           </a>
         </Button>
         <p className="text-sm text-muted-foreground">
-          {percentOf(ranking.share)}% of your listening
+          {matchLabel(ranking.hits)}
         </p>
       </div>
     </div>
   </section>
 );
 
-const Row = ({ ranking, rank }: RowProps) => (
-  <li style={stationStyle(ranking.station.color)}>
-    <Card className="gap-0 py-0 transition-colors hover:border-[var(--station)]/60 hover:bg-accent/60">
-      <a
-        href={playlistUrl(ranking.station)}
-        target="_blank"
-        rel="noreferrer"
-        className="group grid grid-cols-[2rem_3.5rem_1fr_auto] items-center gap-x-4 gap-y-3 p-4 sm:grid-cols-[2.5rem_4rem_1fr_10rem_auto]"
-      >
-        <span className="text-center font-display text-3xl font-bold text-muted-foreground tabular-nums">
-          {rank}
-        </span>
-        <StationArt station={ranking.station} className="w-full" />
-        <div className="min-w-0">
-          <h3 className="truncate font-display text-xl font-bold uppercase">
-            {ranking.station.name}
-          </h3>
-          <p className="truncate text-sm text-muted-foreground">
-            {ranking.matches.slice(0, 4).join(", ")}
-          </p>
-        </div>
-        <div className="col-span-full flex items-center gap-3 sm:col-span-1">
-          <span className="w-10 text-right text-sm font-semibold tabular-nums">
-            {percentOf(ranking.share)}%
-          </span>
-          <Progress
-            value={percentOf(ranking.share)}
-            className="bg-white/10 *:data-[slot=progress-indicator]:bg-[var(--station)]"
-          />
-        </div>
-        <ArrowUpRight
-          aria-label="Open playlist on Spotify"
-          className="col-start-4 row-start-1 size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground sm:col-start-5"
-        />
-      </a>
-    </Card>
-  </li>
-);
+const HitList = ({ title, hits, score, profiles }: HitListProps) =>
+  hits.length > 0 && (
+    <section>
+      <h4 className="text-xs font-medium tracking-[0.15em] text-muted-foreground uppercase">
+        {title}
+      </h4>
+      <ul className="mt-3 grid gap-2.5">
+        {hits.map(({ artist, weight }) => (
+          <li
+            key={artist}
+            className="grid grid-cols-[minmax(0,1fr)_minmax(4rem,40%)] items-center gap-4"
+          >
+            <a
+              href={profiles.get(normalize(artist))?.url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-w-0 items-center gap-3 rounded-full hover:underline"
+            >
+              <ArtistAvatar
+                artist={artist}
+                profiles={profiles}
+                className="size-8"
+              />
+              <span className="truncate text-sm font-medium">{artist}</span>
+            </a>
+            <Progress
+              value={(weight / score) * 100}
+              aria-label={`${artist}'s part of this match`}
+              className="h-1.5 bg-white/10 *:data-[slot=progress-indicator]:bg-[var(--station)]"
+            />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+
+const Row = ({ ranking, rank, profiles }: RowProps) => {
+  const { station, hits, score } = ranking;
+  return (
+    <li style={stationStyle(station.color)}>
+      <Collapsible asChild disabled={!hits.length}>
+        <Card className="group/row gap-0 py-0 transition-colors hover:border-[var(--station)]/60 data-[state=open]:border-[var(--station)]/60">
+          <div className="relative grid grid-cols-[2rem_3.5rem_minmax(0,1fr)_auto] items-center gap-x-4 p-4 sm:grid-cols-[2.5rem_4rem_minmax(0,1fr)_auto_auto]">
+            <span className="text-center font-display text-3xl font-bold text-muted-foreground tabular-nums">
+              {rank}
+            </span>
+            <StationArt station={station} className="w-full" />
+            <div className="min-w-0">
+              <h3>
+                <CollapsibleTrigger className="block max-w-full truncate text-left font-display text-xl font-bold uppercase outline-none after:absolute after:inset-0 after:rounded-xl enabled:cursor-pointer focus-visible:after:ring-2 focus-visible:after:ring-ring">
+                  {station.name}
+                </CollapsibleTrigger>
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {matchLabel(hits)}
+              </p>
+            </div>
+            <div className="hidden -space-x-2 sm:flex">
+              {featured(hits, profiles, 4).map((artist) => (
+                <ArtistAvatar
+                  key={artist}
+                  artist={artist}
+                  profiles={profiles}
+                  className="size-8 ring-2 ring-card"
+                />
+              ))}
+            </div>
+            <div className="flex items-center gap-1">
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="relative z-10 rounded-full text-muted-foreground hover:text-spotify"
+              >
+                <a
+                  href={playlistUrl(station)}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`Open ${station.name} on Spotify`}
+                  title="Open on Spotify"
+                >
+                  <SpotifyIcon className="size-5" />
+                </a>
+              </Button>
+              <ChevronDown
+                aria-hidden
+                className={`size-5 text-muted-foreground transition-transform group-data-[state=open]/row:rotate-180 ${hits.length ? "" : "invisible"}`}
+              />
+            </div>
+          </div>
+          <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+            <div className="grid gap-6 border-t px-4 py-5 sm:pr-24 sm:pl-[9.5rem]">
+              <HitList
+                title="Play on this station"
+                hits={hits.filter(({ similar }) => !similar)}
+                score={score}
+                profiles={profiles}
+              />
+              <HitList
+                title="Sound similar · count less"
+                hits={hits.filter(({ similar }) => similar)}
+                score={score}
+                profiles={profiles}
+              />
+            </div>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
+    </li>
+  );
+};
 
 export const Results = ({ rankings, profiles }: ResultsProps) => {
   const [expanded, setExpanded] = useState(false);
   const [best] = rankings;
-  const matched = rankings.filter(({ share }) => percentOf(share) > 0);
+  const matched = rankings.filter(({ hits }) => hits.length);
   const visible = expanded ? rankings : matched;
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
@@ -161,6 +264,7 @@ export const Results = ({ rankings, profiles }: ResultsProps) => {
               key={ranking.station.name}
               ranking={ranking}
               rank={index + 1}
+              profiles={profiles}
             />
           ))}
         </ol>
