@@ -8,7 +8,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Progress } from "@/components/ui/progress";
 import { SpotifyIcon } from "@/components/spotify-icon";
 import { StationArt } from "@/components/station-art";
 import {
@@ -142,43 +141,37 @@ const HitList = ({ title, hits, score, profiles }: HitListProps) => {
         <h4 className="text-xs font-medium tracking-[0.15em] text-muted-foreground uppercase">
           {title}
         </h4>
-        <ul className="mt-3 grid gap-2.5">
-          {visible.map(({ artist, weight }) => (
-            <li
-              key={artist}
-              className="grid grid-cols-[minmax(0,1fr)_minmax(4rem,40%)] items-center gap-4"
-            >
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {visible.map(({ artist }) => (
+            <li key={artist} className="min-w-0">
               <a
                 href={profiles.get(normalize(artist))?.url}
                 target="_blank"
                 rel="noreferrer"
-                className="flex min-w-0 items-center gap-3 rounded-full hover:underline"
+                className="flex h-9 min-w-0 items-center gap-2 rounded-full bg-white/5 pr-3.5 pl-1 transition hover:bg-white/10 hover:ring-1 hover:ring-[var(--station)]"
               >
                 <ArtistAvatar
                   artist={artist}
                   profiles={profiles}
-                  className="size-8"
+                  className="size-7"
                 />
                 <span className="truncate text-sm font-medium">{artist}</span>
               </a>
-              <Progress
-                value={(weight / score) * 100}
-                aria-label={`${artist}'s part of this match`}
-                className="h-1.5 bg-white/10 *:data-[slot=progress-indicator]:bg-[var(--station)]"
-              />
             </li>
           ))}
+          {visible.length < hits.length && (
+            <li>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 rounded-full px-3.5 text-muted-foreground"
+                onClick={() => setExpanded(true)}
+              >
+                +{hits.length - visible.length} more
+              </Button>
+            </li>
+          )}
         </ul>
-        {visible.length < hits.length && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-3 w-full"
-            onClick={() => setExpanded(true)}
-          >
-            Show {hits.length - visible.length} more artists
-          </Button>
-        )}
       </section>
     )
   );
@@ -205,7 +198,7 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
                 {matchLabel(hits)}
               </p>
             </div>
-            <div className="hidden -space-x-2 sm:flex">
+            <div className="hidden -space-x-2 transition-opacity group-data-[state=open]/row:opacity-0 sm:flex">
               {featured(hits, profiles, 4).map((artist) => (
                 <ArtistAvatar
                   key={artist}
