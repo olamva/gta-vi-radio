@@ -19,7 +19,7 @@ export const Login = ({ error, onLogin }: LoginProps) => (
       </picture>
       <div className="absolute inset-0 -z-10 bg-linear-to-b from-background/40 via-background/55 to-background" />
       <div className="mx-auto w-full max-w-6xl px-4 pt-32 pb-16 sm:px-6 sm:pb-24">
-        <h1 className="max-w-3xl font-display text-6xl leading-[0.9] font-extrabold uppercase sm:text-8xl">
+        <h1 className="max-w-3xl font-display text-6xl leading-[0.85] font-black uppercase sm:text-8xl">
           Find your station
         </h1>
         {error && (
@@ -39,7 +39,9 @@ export const Login = ({ error, onLogin }: LoginProps) => (
       </div>
     </section>
     <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-      <h2 className="font-display text-3xl font-bold uppercase">On the dial</h2>
+      <h2 className="font-display text-3xl font-black uppercase">
+        On the dial
+      </h2>
       <ul className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-6 lg:grid-cols-8">
         {STATIONS.map((station) => (
           <li key={station.name}>
