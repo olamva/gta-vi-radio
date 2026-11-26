@@ -117,7 +117,7 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
   return (
     <li
       style={{ ...stationStyle(station.color), ...morph("row") }}
-      className="border-b border-white/15 [view-transition-class:row]"
+      className="border-b border-white/15 [view-transition-class:clip]"
     >
       <Collapsible
         open={open}
@@ -127,7 +127,10 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
       >
         {!open && (
           <div className="relative grid grid-cols-[2rem_3.5rem_minmax(0,1fr)_auto] items-center gap-x-3 py-4 sm:grid-cols-[3.5rem_4rem_minmax(0,1fr)_auto] sm:gap-x-4">
-            <span className="font-display text-3xl font-black text-muted-foreground tabular-nums transition-colors group-hover/row:text-[var(--station)] sm:text-4xl">
+            <span
+              style={morph("rank")}
+              className="w-fit font-display text-3xl font-black text-muted-foreground tabular-nums transition-colors group-hover/row:text-[var(--station)] sm:text-4xl"
+            >
               {rank}
             </span>
             <div style={morph("art")}>
@@ -142,7 +145,10 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
                   {station.name}
                 </CollapsibleTrigger>
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p
+                style={morph("meta")}
+                className="text-sm text-muted-foreground [view-transition-class:clip]"
+              >
                 {matchLabel(hits)}
               </p>
             </div>
@@ -165,6 +171,7 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
               </Button>
               <ChevronDown
                 aria-hidden
+                style={morph("chevron")}
                 className={`size-5 text-muted-foreground ${hits.length ? "" : "invisible"}`}
               />
             </div>
@@ -176,7 +183,10 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
               <StationArt station={station} className="w-full" />
             </div>
             <div className="min-w-0">
-              <p className="font-display text-2xl font-bold text-sunset uppercase">
+              <p
+                style={morph("rank")}
+                className="w-fit font-display text-2xl font-bold text-sunset uppercase"
+              >
                 Your{" "}
                 <span className="text-[var(--station)] tabular-nums">
                   #{rank}
@@ -189,30 +199,39 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
               >
                 {station.name}
               </h2>
-              <p className="mt-3 text-muted-foreground">{matchLabel(hits)}</p>
-              <Button
-                asChild
-                size="lg"
-                className="mt-6 h-12 rounded-sm bg-spotify px-6 font-display text-xl font-black text-black uppercase hover:bg-spotify/90"
+              <div
+                style={morph("meta")}
+                className="[view-transition-class:clip]"
               >
-                <a href={playlistUrl(station)} target="_blank" rel="noreferrer">
-                  <SpotifyIcon className="size-5" />
-                  Listen on Spotify
-                </a>
-              </Button>
-              <div className="mt-10 grid gap-6">
-                <HitList
-                  title="On this station"
-                  hits={hits.filter(({ similar }) => !similar)}
-                  score={score}
-                  profiles={profiles}
-                />
-                <HitList
-                  title="Matched by sound only"
-                  hits={hits.filter(({ similar }) => similar)}
-                  score={score}
-                  profiles={profiles}
-                />
+                <p className="mt-3 text-muted-foreground">{matchLabel(hits)}</p>
+                <Button
+                  asChild
+                  size="lg"
+                  className="mt-6 h-12 rounded-sm bg-spotify px-6 font-display text-xl font-black text-black uppercase hover:bg-spotify/90"
+                >
+                  <a
+                    href={playlistUrl(station)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <SpotifyIcon className="size-5" />
+                    Listen on Spotify
+                  </a>
+                </Button>
+                <div className="mt-10 grid gap-6">
+                  <HitList
+                    title="On this station"
+                    hits={hits.filter(({ similar }) => !similar)}
+                    score={score}
+                    profiles={profiles}
+                  />
+                  <HitList
+                    title="Matched by sound only"
+                    hits={hits.filter(({ similar }) => similar)}
+                    score={score}
+                    profiles={profiles}
+                  />
+                </div>
               </div>
             </div>
             <CollapsibleTrigger asChild>
@@ -222,7 +241,11 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
                 aria-label={`Collapse ${station.name}`}
                 className="absolute top-6 right-0 text-muted-foreground"
               >
-                <ChevronDown aria-hidden className="size-5 rotate-180" />
+                <ChevronDown
+                  aria-hidden
+                  style={morph("chevron")}
+                  className="size-5 rotate-180"
+                />
               </Button>
             </CollapsibleTrigger>
           </div>

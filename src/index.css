@@ -78,7 +78,7 @@
   animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-::view-transition-group(*.row) {
+::view-transition-group(*.clip) {
   overflow: clip;
 }
 
