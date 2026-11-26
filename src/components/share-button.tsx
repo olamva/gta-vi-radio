@@ -20,7 +20,8 @@ interface ActionProps {
 }
 
 const Action = ({ icon, children, href, download, onClick }: ActionProps) => {
-  const className = "h-11 justify-start rounded-sm px-4";
+  const className =
+    "h-auto flex-col gap-1.5 rounded-sm px-2 py-3 text-xs [&_svg:not([class*='size-'])]:size-5";
   return href ? (
     <Button asChild variant="secondary" className={className}>
       <a
@@ -75,58 +76,58 @@ export const ShareButton = ({ rankings, profiles }: ShareButtonProps) => {
       </Button>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in-0" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 gap-8 overflow-y-auto bg-card p-6 pt-16 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:grid-cols-[minmax(0,1fr)_15rem] sm:p-8">
-          <img
-            src={preview}
-            alt="Your GTA VI Radio Match card"
-            className="w-full"
-          />
-          <div className="flex flex-col">
-            <Dialog.Title className="pr-8 font-display text-3xl leading-none font-black uppercase">
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100vh-2rem)] w-min max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 gap-5 overflow-y-auto bg-card p-6 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95">
+          <div className="pr-10">
+            <Dialog.Title className="font-display text-3xl leading-none font-black uppercase">
               Share my results
             </Dialog.Title>
-            <Dialog.Description className="mt-3 text-sm text-muted-foreground">
+            <Dialog.Description className="mt-2 text-sm text-muted-foreground">
               Send the card with the site link. Your friends can then find their
               own station.
             </Dialog.Description>
-            {card && preview && (
-              <div className="mt-6 grid gap-2">
-                <Action
-                  icon={copyIcon("image", <Copy />)}
-                  onClick={() =>
-                    copy("image", () =>
-                      navigator.clipboard.write([
-                        new ClipboardItem({ [card.type]: card }),
-                      ]),
-                    )
-                  }
-                >
-                  {copied === "image" ? "Copied" : "Copy image"}
-                </Action>
-                <Action icon={<Download />} href={preview} download={card.name}>
-                  Download image
-                </Action>
-                <Action
-                  icon={copyIcon("link", <Link />)}
-                  onClick={() =>
-                    copy("link", () =>
-                      navigator.clipboard.writeText(location.origin),
-                    )
-                  }
-                >
-                  {copied === "link" ? "Copied" : "Copy site link"}
-                </Action>
-                {data && canShare(data) && (
-                  <Action
-                    icon={<Share />}
-                    onClick={() => navigator.share(data).catch(() => undefined)}
-                  >
-                    More options
-                  </Action>
-                )}
-              </div>
-            )}
           </div>
+          <img
+            src={preview}
+            alt="Your GTA VI Radio Match card"
+            className="w-[min(26rem,48vh,calc(100vw-5rem))] max-w-none"
+          />
+          {card && preview && (
+            <div className="grid auto-cols-fr grid-flow-col gap-2">
+              <Action
+                icon={copyIcon("image", <Copy />)}
+                onClick={() =>
+                  copy("image", () =>
+                    navigator.clipboard.write([
+                      new ClipboardItem({ [card.type]: card }),
+                    ]),
+                  )
+                }
+              >
+                {copied === "image" ? "Copied" : "Copy image"}
+              </Action>
+              <Action icon={<Download />} href={preview} download={card.name}>
+                Download image
+              </Action>
+              <Action
+                icon={copyIcon("link", <Link />)}
+                onClick={() =>
+                  copy("link", () =>
+                    navigator.clipboard.writeText(location.origin),
+                  )
+                }
+              >
+                {copied === "link" ? "Copied" : "Copy site link"}
+              </Action>
+              {data && canShare(data) && (
+                <Action
+                  icon={<Share />}
+                  onClick={() => navigator.share(data).catch(() => undefined)}
+                >
+                  More options
+                </Action>
+              )}
+            </div>
+          )}
           <Dialog.Close asChild>
             <Button
               variant="ghost"
