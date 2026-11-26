@@ -7,24 +7,18 @@
       name="description"
       content="Find the GTA VI radio station that fits your Spotify listening history."
     />
-    <title>GTA VI Radio</title>
+    <meta name="theme-color" content="#1a1022" />
+    <title>GTA VI Radio Match</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Inter:wght@400;500;600&display=swap"
     />
   </head>
   <body>
-    <header>
-      <a class="brand" href="/">
-        <img src="/favicon.svg" alt="" width="56" height="42" />
-        <span>Radio Match</span>
-      </a>
-      <button id="logout" class="ghost" type="button" hidden>Log out</button>
-    </header>
-    <main id="app"></main>
-    <script type="module" src="/src/main.ts"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

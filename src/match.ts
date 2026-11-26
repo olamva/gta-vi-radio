@@ -2,9 +2,16 @@ export type Station = {
   name: string;
   blurb: string;
   color: string;
+  icon?: string;
+  playlist?: string;
   artists: string[];
   similar: string[];
 };
+
+export const playlistUrl = ({ name, playlist }: Station) =>
+  playlist
+    ? `https://open.spotify.com/playlist/${playlist}`
+    : `https://open.spotify.com/search/${encodeURIComponent(`GTAVI Radio: ${name}`)}/playlists`;
 
 export type Range = "short_term" | "medium_term" | "long_term";
 

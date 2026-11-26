@@ -17,6 +17,11 @@ In Development Mode, add each listener's Spotify email under User Management. Sp
 
 The page uses the PKCE flow. It keeps the refresh token in `localStorage`, so users stay logged in until they log out or revoke access.
 
+## Assets
+
+The station icons and the hero art come from the [Rockstar GTA VI music page](https://www.rockstargames.com/VI/music). Rockstar publishes icons for 7 stations. The other stations show a text tile until an official icon is available.
+Stations with a `playlist` ID link to the official Spotify "GTAVI Radio" playlist. The other stations open a Spotify search for that playlist name.
+
 ## Development
 
 Run `pnpm install`, then `pnpm dev`.

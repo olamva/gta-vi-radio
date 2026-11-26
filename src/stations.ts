@@ -5,6 +5,8 @@ export const STATIONS: Station[] = [
     name: "AfroBank FM",
     blurb: "African classics to amapiano and 3-step, hosted by Burna Boy.",
     color: "#f2b632",
+    icon: "/stations/afrobank-fm.webp",
+    playlist: "37i9dQZF1DXcGCMmxwmtXk",
     artists: [
       "Alafia",
       "Alaska",
@@ -82,7 +84,9 @@ export const STATIONS: Station[] = [
   {
     name: "Back Country Radio",
     blurb: "Outlaw country, hosted by Morgan Wallen and Lana Del Rey.",
-    color: "#c9773b",
+    color: "#e0473d",
+    icon: "/stations/back-country-radio.webp",
+    playlist: "37i9dQZF1DX6wHAaQgEaql",
     artists: [
       "David Allan Coe",
       "George Jones",
@@ -134,7 +138,9 @@ export const STATIONS: Station[] = [
   {
     name: "Circoloco Records Radio",
     blurb: "House and techno from the Circoloco label, hosted by Seth Troxler.",
-    color: "#5ad1c4",
+    color: "#ff4436",
+    icon: "/stations/circoloco-records-radio.webp",
+    playlist: "37i9dQZF1DWSl1fPFVnb1Q",
     artists: [
       "Aline Umber",
       "Krol",
@@ -198,7 +204,9 @@ export const STATIONS: Station[] = [
   {
     name: "Cocoteo FM",
     blurb: "Reggaeton, dembow, bachata and merengue, hosted by Bad Bunny.",
-    color: "#ff5fa2",
+    color: "#f7a6e0",
+    icon: "/stations/cocoteo-fm.webp",
+    playlist: "37i9dQZF1DXbPiTvBXRA4K",
     artists: [
       "Anuel AA",
       "Haze",
@@ -269,7 +277,9 @@ export const STATIONS: Station[] = [
   {
     name: "Dirty South Classics",
     blurb: "Classic Southern rap, hosted by Trina and Trick Daddy.",
-    color: "#e0443e",
+    color: "#dcc58a",
+    icon: "/stations/dirty-south-classics.webp",
+    playlist: "37i9dQZF1DXcsfnAtkn9GL",
     artists: [
       "2 Chainz",
       "Drake",
@@ -417,7 +427,9 @@ export const STATIONS: Station[] = [
   {
     name: "Flash FM",
     blurb: "Vice City's pop station, from Britney to Chappell Roan.",
-    color: "#ff4fd8",
+    color: "#ff6aa8",
+    icon: "/stations/flash-fm.webp",
+    playlist: "37i9dQZF1DWW3zGGXBB1qW",
     artists: [
       "Addison Rae",
       "Adéla",
@@ -1064,7 +1076,9 @@ export const STATIONS: Station[] = [
   {
     name: "The Chamber 106.6",
     blurb: "Metal from the '80s onward, hosted by Kerry King and Tom Araya.",
-    color: "#9aa0a6",
+    color: "#ff3d2e",
+    icon: "/stations/the-chamber-106-6.webp",
+    playlist: "37i9dQZF1DWSRdro1ZJ0nG",
     artists: [
       "Anthrax",
       "Black Sabbath",
