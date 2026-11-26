@@ -147,7 +147,7 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
               </h2>
               <p
                 style={morph("meta")}
-                className="text-sm text-muted-foreground [view-transition-class:clip]"
+                className="pointer-events-none text-sm text-muted-foreground [view-transition-class:clip]"
               >
                 {matchLabel(hits)}
               </p>
@@ -193,21 +193,23 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
                 </span>{" "}
                 station
               </p>
-              <h2
-                style={morph("title")}
-                className="mt-2 w-fit font-display text-5xl leading-[0.85] font-black uppercase sm:text-8xl"
-              >
-                {station.name}
+              <h2 className="mt-2 font-display text-5xl leading-[0.85] font-black uppercase sm:text-8xl">
+                <CollapsibleTrigger
+                  style={morph("title")}
+                  className="cursor-pointer text-left outline-none after:absolute after:inset-0 focus-visible:after:ring-2 focus-visible:after:ring-ring focus-visible:after:ring-inset"
+                >
+                  {station.name}
+                </CollapsibleTrigger>
               </h2>
               <div
                 style={morph("meta")}
-                className="[view-transition-class:clip]"
+                className="pointer-events-none [view-transition-class:clip] [&>*:not(p)]:pointer-events-auto"
               >
                 <p className="mt-3 text-muted-foreground">{matchLabel(hits)}</p>
                 <Button
                   asChild
                   size="lg"
-                  className="mt-6 h-12 rounded-sm bg-spotify px-6 font-display text-xl font-black text-black uppercase hover:bg-spotify/90"
+                  className="relative z-10 mt-6 h-12 rounded-sm bg-spotify px-6 font-display text-xl font-black text-black uppercase hover:bg-spotify/90"
                 >
                   <a
                     href={playlistUrl(station)}
@@ -218,7 +220,7 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
                     Listen on Spotify
                   </a>
                 </Button>
-                <div className="mt-10 grid gap-6">
+                <div className="relative z-10 mt-10 grid gap-6">
                   <HitList
                     title="On this station"
                     hits={hits.filter(({ similar }) => !similar)}
@@ -234,20 +236,13 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
                 </div>
               </div>
             </div>
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={`Collapse ${station.name}`}
-                className="absolute top-6 right-0 text-muted-foreground"
-              >
-                <ChevronDown
-                  aria-hidden
-                  style={morph("chevron")}
-                  className="size-5 rotate-180"
-                />
-              </Button>
-            </CollapsibleTrigger>
+            <span className="pointer-events-none absolute top-6 right-0 grid size-9 place-items-center text-muted-foreground">
+              <ChevronDown
+                aria-hidden
+                style={morph("chevron")}
+                className="size-5 rotate-180"
+              />
+            </span>
           </div>
         </CollapsibleContent>
       </Collapsible>
