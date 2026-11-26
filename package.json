@@ -1,0 +1,21 @@
+{
+  "name": "gta-vi-radio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "prettier --check . && oxlint && node --test 'test/**/*.test.ts'",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "worktree:cleanup": "node scripts/worktree-cleanup.ts"
+  },
+  "packageManager": "pnpm@12.5.1",
+  "devDependencies": {
+    "@types/node": "^26.6.9",
+    "oxlint": "^1.95.0",
+    "prettier": "^3.10.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}
