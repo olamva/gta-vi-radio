@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import test from "node:test";
 import { rankStations, weighHistory, type History } from "../src/match.ts";
 import { STATIONS } from "../src/stations.ts";
@@ -90,4 +91,11 @@ test("a metal listener gets The Chamber", () => {
     ),
     "The Chamber 106.6",
   );
+});
+
+test("every station icon exists in public", () => {
+  const missing = STATIONS.flatMap(({ icon }) =>
+    icon && !existsSync(`public${icon}`) ? [icon] : [],
+  );
+  assert.deepEqual(missing, []);
 });

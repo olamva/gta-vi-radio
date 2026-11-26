@@ -11,7 +11,7 @@ export type Station = {
 export const playlistUrl = ({ name, playlist }: Station) =>
   playlist
     ? `https://open.spotify.com/playlist/${playlist}`
-    : `https://open.spotify.com/search/${encodeURIComponent(`GTAVI Radio: ${name}`)}/playlists`;
+    : `https://open.spotify.com/search/${encodeURIComponent(`GTAVI Radio: ${name}`)}`;
 
 export type Range = "short_term" | "medium_term" | "long_term";
 

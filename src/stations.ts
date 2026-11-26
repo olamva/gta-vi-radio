@@ -363,6 +363,8 @@ export const STATIONS: Station[] = [
     name: "Emotion 98.3",
     blurb: "1970s and 1980s soft rock and easy listening.",
     color: "#e98bd0",
+    icon: "/stations/emotion-98-3.webp",
+    playlist: "37i9dQZF1DX1ZcUqIGOF7E",
     artists: [
       "Ace",
       "Air Supply",
@@ -576,6 +578,8 @@ export const STATIONS: Station[] = [
     name: "Gloriana Blues",
     blurb: "Historic and modern blues, hosted by Buddy Guy and Keith Richards.",
     color: "#4f7fe0",
+    icon: "/stations/gloriana-blues.webp",
+    playlist: "37i9dQZF1DX6B23dNssi5n",
     artists: [
       "Albert Collins",
       "B.B. King",
@@ -630,6 +634,7 @@ export const STATIONS: Station[] = [
     name: "Honey FM",
     blurb: "Mostly '90s R&B and soul, hosted by Chilli and T-Boz.",
     color: "#f59b42",
+    icon: "/stations/honey-fm.webp",
     artists: [
       "112",
       "Akon",
@@ -723,6 +728,7 @@ export const STATIONS: Station[] = [
     blurb:
       "Global oddities, strange covers and obscure records, hosted by Jeremy Irons.",
     color: "#9b6bff",
+    icon: "/stations/kaleidoscope-fm.webp",
     artists: [
       "Alim Qasimov",
       "Fargana Qasimova",
@@ -774,6 +780,7 @@ export const STATIONS: Station[] = [
     name: "Leonida Jazz Radio",
     blurb: "Jazz fusion, hosted by Randy Brecker and Stanley Clarke.",
     color: "#2fb5a3",
+    icon: "/stations/leonida-jazz-radio.webp",
     artists: [
       "Azymuth",
       "BADBADNOTGOOD",
@@ -843,6 +850,8 @@ export const STATIONS: Station[] = [
     blurb:
       "Classic salsa, Cuban music and merengue, hosted by Emilio and Gloria Estefan.",
     color: "#ff8a3d",
+    icon: "/stations/radio-la-ola.webp",
+    playlist: "37i9dQZF1DWXTWbz68EG90",
     artists: [
       "Albita",
       "Willy Chirino",
@@ -901,6 +910,8 @@ export const STATIONS: Station[] = [
     blurb:
       "Roots reggae, lovers rock and heavy dub, curated by Adrian Sherwood.",
     color: "#47c46b",
+    icon: "/stations/radio-on-u.webp",
+    playlist: "37i9dQZF1DWSsYu3Tj6uGn",
     artists: [
       "Adrian Sherwood",
       "Augustus Pablo",
@@ -953,6 +964,8 @@ export const STATIONS: Station[] = [
     blurb:
       "Indie dance and electroclash, hosted by The Dare and PinkPantheress.",
     color: "#c6f03c",
+    icon: "/stations/stockyard-fm.webp",
+    playlist: "37i9dQZF1DXdGIiMhKyPsA",
     artists: [
       "!!!",
       "Meah Pace",
@@ -1031,6 +1044,7 @@ export const STATIONS: Station[] = [
     name: "Symphony FM",
     blurb: "Orchestral works from Bach to Lutosławski, hosted by Yuja Wang.",
     color: "#d9c48a",
+    icon: "/stations/symphony-fm.webp",
     artists: [
       "Claude Debussy",
       "Dmitri Shostakovich",
@@ -1254,6 +1268,8 @@ export const STATIONS: Station[] = [
     blurb:
       "Classic and hard rock, hosted by Lindsey Buckingham and Michael McDonald.",
     color: "#ff6b3d",
+    icon: "/stations/v-rock.webp",
+    playlist: "37i9dQZF1DXaWImNAzqnz6",
     artists: [
       "38 Special",
       "AC/DC",
@@ -1347,6 +1363,7 @@ export const STATIONS: Station[] = [
     name: "Vice City FM",
     blurb: '1980s pop, hosted by "Weird Al" Yankovic and Brigitte Nielsen.',
     color: "#ff7ac6",
+    icon: "/stations/vice-city-fm.webp",
     artists: [
       "A Flock Of Seagulls",
       "ABC",
@@ -1447,6 +1464,8 @@ export const STATIONS: Station[] = [
     name: "Vice City Rap Radio",
     blurb: "Current rap hits and new hip-hop, hosted by JT and DJ Stevie J.",
     color: "#ffd23f",
+    icon: "/stations/vice-city-rap-radio.webp",
+    playlist: "37i9dQZF1DWURyzas9h4zm",
     artists: [
       "21 Savage",
       "310babii",
@@ -1575,6 +1594,7 @@ export const STATIONS: Station[] = [
     name: "Worldwide FM",
     blurb: "Jazz, soul and global sounds, hosted by Gilles Peterson.",
     color: "#7fd1ff",
+    icon: "/stations/worldwide-fm.webp",
     artists: [
       "4hero",
       "Alewya",

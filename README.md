@@ -19,8 +19,8 @@ The page uses the PKCE flow. It keeps the refresh token in `localStorage`, so us
 
 ## Assets
 
-The station icons and the hero art come from the [Rockstar GTA VI music page](https://www.rockstargames.com/VI/music). Rockstar publishes icons for 7 stations. The other stations show a text tile until an official icon is available.
-Stations with a `playlist` ID link to the official Spotify "GTAVI Radio" playlist. The other stations open a Spotify search for that playlist name.
+The hero art and 7 station icons come from the [Rockstar GTA VI music page](https://www.rockstargames.com/VI/music). The other icons are station logos from the [GTA Wiki](https://gta.fandom.com/wiki/Radio_Stations_in_GTA_VI), placed on square tiles. Stations without a logo show a text tile.
+Stations with a `playlist` ID link to an official Spotify "GTAVI Radio" playlist that the `spotify` account owns. The other stations open a Spotify search for that playlist name.
 
 ## Development
 
