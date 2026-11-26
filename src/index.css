@@ -6,6 +6,7 @@
 :root {
   color-scheme: dark;
   scrollbar-color: oklch(1 0 0 / 20%) transparent;
+  scrollbar-gutter: stable;
   --radius: 0.75rem;
   --background: oklch(0.16 0.03 300);
   --foreground: oklch(0.97 0.01 330);
@@ -69,5 +70,22 @@
 
   .font-display {
     word-spacing: 0.12em;
+  }
+}
+
+::view-transition-group(*) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+::view-transition-group(*.row) {
+  overflow: clip;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
   }
 }

@@ -93,7 +93,7 @@ test("match labels count station and similar artists apart", () => {
       matchLabel,
     ),
     [
-      "Plays 2 of yours · sounds like 1 more",
+      "Plays 2 of yours and sounds like 1 more",
       "Plays 1 of your artists",
       "Sounds like 1 of your artists",
       "Plays none of your artists",

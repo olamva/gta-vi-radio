@@ -55,7 +55,7 @@ export const matchLabel = (hits: Hit[]) => {
   const similar = hits.filter((hit) => hit.similar).length;
   const direct = hits.length - similar;
   if (direct && similar)
-    return `Plays ${direct} of yours · sounds like ${similar} more`;
+    return `Plays ${direct} of yours and sounds like ${similar} more`;
   if (direct) return `Plays ${direct} of your artists`;
   if (similar) return `Sounds like ${similar} of your artists`;
   return "Plays none of your artists";
