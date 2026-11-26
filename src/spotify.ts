@@ -12,6 +12,7 @@ type Artist = {
   external_urls: { spotify: string };
   images?: { url: string }[];
 };
+type User = Omit<Artist, "name"> & { id: string; display_name: string | null };
 type Track = { artists: Artist[] };
 type Page<T> = { items: T[] };
 
@@ -158,9 +159,11 @@ const profilesOf = (artists: Artist[]): Profiles => {
 export const listeningHistory = async (): Promise<{
   history: History;
   profiles: Profiles;
+  account: Profile;
 }> => {
   await accessToken();
-  const [artists, tracks, recent] = await Promise.all([
+  const [user, artists, tracks, recent] = await Promise.all([
+    api<User>("me"),
     byRange(
       async (range) =>
         (await api<Page<Artist>>(`me/top/artists?limit=50&time_range=${range}`))
@@ -189,5 +192,10 @@ export const listeningHistory = async (): Promise<{
         ({ artists }) => artists,
       ),
     ]),
+    account: {
+      name: user.display_name ?? user.id,
+      url: user.external_urls.spotify,
+      image: user.images?.at(-1)?.url,
+    },
   };
 };

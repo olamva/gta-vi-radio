@@ -12,10 +12,7 @@ export const StationArt = ({ station, className }: StationArtProps) =>
       src={station.icon}
       alt={`${station.name} logo`}
       loading="lazy"
-      className={cn(
-        "aspect-square shrink-0 rounded-md object-cover",
-        className,
-      )}
+      className={cn("aspect-square shrink-0 object-cover", className)}
     />
   ) : (
     <div
@@ -23,7 +20,7 @@ export const StationArt = ({ station, className }: StationArtProps) =>
       aria-label={`${station.name} logo`}
       style={{ color: station.color }}
       className={cn(
-        "@container grid aspect-square shrink-0 place-items-center rounded-md border border-current/25 bg-current/10 p-[8%]",
+        "@container grid aspect-square shrink-0 place-items-center border border-current/25 bg-current/10 p-[8%]",
         className,
       )}
     >

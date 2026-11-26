@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Login } from "@/components/login";
+import { ProfileAvatar } from "@/components/profile-avatar";
 import { Results } from "@/components/results";
 import { rankStations, weighHistory, type Ranking } from "@/match.ts";
 import {
@@ -12,6 +13,7 @@ import {
   listeningHistory,
   login,
   logout,
+  type Profile,
   type Profiles,
 } from "@/spotify.ts";
 import { STATIONS } from "@/stations.ts";
@@ -19,7 +21,12 @@ import { STATIONS } from "@/stations.ts";
 type State =
   | { status: "login"; error?: string }
   | { status: "loading" }
-  | { status: "done"; rankings: Ranking[]; profiles: Profiles };
+  | {
+      status: "done";
+      rankings: Ranking[];
+      profiles: Profiles;
+      account: Profile;
+    };
 
 const loadRankings = async (): Promise<State> => {
   if (!hasClientId())
@@ -27,11 +34,12 @@ const loadRankings = async (): Promise<State> => {
   try {
     await completeLogin();
     if (!isLoggedIn()) return { status: "login" };
-    const { history, profiles } = await listeningHistory();
+    const { history, profiles, account } = await listeningHistory();
     return {
       status: "done",
       rankings: rankStations(weighHistory(history), STATIONS),
       profiles,
+      account,
     };
   } catch (error) {
     return {
@@ -88,9 +96,26 @@ export const App = () => {
             </span>
           </a>
           {state.status === "done" && (
-            <Button variant="ghost" size="sm" onClick={signOut}>
-              Log out
-            </Button>
+            <div className="flex items-center gap-2">
+              <a
+                href={state.account.url}
+                target="_blank"
+                rel="noreferrer"
+                title="Open your Spotify profile"
+                className="flex items-center gap-2.5 text-sm font-medium transition hover:opacity-75"
+              >
+                <ProfileAvatar
+                  name={state.account.name}
+                  image={state.account.image}
+                />
+                <span className="hidden max-w-40 truncate sm:block">
+                  {state.account.name}
+                </span>
+              </a>
+              <Button variant="ghost" size="sm" onClick={signOut}>
+                Log out
+              </Button>
+            </div>
           )}
         </div>
       </header>
