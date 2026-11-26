@@ -29,6 +29,13 @@ const percentOf = (share: number) => Math.round(share * 100);
 const stationStyle = (color: string) =>
   ({ "--station": color }) as CSSProperties;
 
+const featured = (matches: string[], profiles: Profiles) => {
+  const pictured = matches.filter(
+    (artist) => profiles.get(normalize(artist))?.image,
+  );
+  return (pictured.length >= 4 ? pictured : matches).slice(0, 8);
+};
+
 const Winner = ({ ranking, profiles }: WinnerProps) => (
   <section
     style={stationStyle(ranking.station.color)}
@@ -46,7 +53,7 @@ const Winner = ({ ranking, profiles }: WinnerProps) => (
         {ranking.station.name}
       </h1>
       <ul className="mt-6 flex flex-wrap gap-2">
-        {ranking.matches.slice(0, 8).map((artist) => {
+        {featured(ranking.matches, profiles).map((artist) => {
           const profile = profiles.get(normalize(artist));
           return (
             <li key={artist}>
