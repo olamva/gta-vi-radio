@@ -185,7 +185,7 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
             <div className="min-w-0">
               <p
                 style={morph("rank")}
-                className="w-fit font-display text-2xl font-bold text-sunset uppercase"
+                className="w-fit font-display text-2xl font-bold text-foreground uppercase"
               >
                 Your{" "}
                 <span className="text-[var(--station)] tabular-nums">
