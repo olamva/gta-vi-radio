@@ -1,0 +1,71 @@
+# Parallel work
+
+Treat a task as done only when its changes are in a pull request and merged into `main`.
+Do not wait for deployment after the merge. Settle the thread and clean up immediately.
+If a required step is blocked, report the current status and the blocker. Do not report the task as done.
+
+Use one branch and one worktree for each task.
+Start each task in a new T3 thread and its worktree.
+Import the `Setup Worktree` action from `t3.json` in T3 project settings once.
+Let T3 run the action for new worktrees. It updates the new branch to `origin/main` and installs dependencies.
+If T3 skips setup, run `git fetch origin main`, `git merge --ff-only origin/main`, and `CI=true pnpm install --frozen-lockfile` before edits.
+Use the branch that T3 creates for the worktree. Rename it with `git branch -m` when needed. Do not create a second branch.
+Create a new branch from the current `origin/main` only in a detached checkout.
+Keep edits in the task worktree. Do not change another task's branch or worktree.
+Before you edit, run `gh pr list --state open --json number,files`. If an open PR changes a file that you must change, keep the overlap small and tell the user.
+Coordinate changes to shared state with concurrent agents. Worktrees do not isolate this state:
+
+- the main checkout at `~/Developer/gta-vi-radio` and its `.git` directory, including the stash
+- the dev server port `5173`
+- the Spotify Web API rate limit, which all local servers share
+- the Vercel project settings and environment variables, and GitHub settings and variables
+
+Run `VITE_PORT=0 pnpm dev` in each worktree. Point preview checks at the Vite URL that it prints.
+
+## Pull requests
+
+Create a pull request into `main` for each completed task. Do not merge a stack of pull requests.
+Explain the change and report validation in the pull request description.
+Run `pnpm format` before each commit. `pnpm test` fails on unformatted files.
+Run `pnpm test`, `pnpm typecheck`, and `pnpm build` before you push.
+Review the final diff. Resolve review feedback within the task scope.
+Resolve each review thread. Unresolved threads block auto-merge.
+Fetch `origin/main` before you push. Merge it into the task branch if the branch is behind.
+Enable auto-merge on your own PR with `gh pr merge --auto --merge` immediately after you push.
+Do not wait for user review before you merge a PR without visual changes.
+Then call `link_pull_request` and `watch_pull_request`, and end the turn. T3 wakes the thread when the checks finish or a comment arrives.
+If a check fails, fix the failure and push the correction. Auto-merge stays enabled for the new head commit.
+If `gh pr view --json state,mergeStateStatus` shows `BEHIND`, merge `origin/main` into the task branch, resolve conflicts, and push.
+Run each `gh` command as a separate shell call, so the allow rules apply.
+Do not force-push, bypass branch protection, or merge with blocked checks. Do not use `gh pr merge --admin`.
+
+## Visual review
+
+Require explicit visual approval for changes beyond a minor correction.
+Require approval for noticeable layout, navigation, typography, color, component styling, or responsive changes.
+Treat an isolated correction that preserves the existing design as minor.
+Require approval when the classification is unclear.
+Use T3 preview tools first for web UI review and screenshots when they are available.
+Call `mcp__t3_code__preview_snapshot` with `save: true`.
+Embed each returned `screenshotPath` in the review message.
+Copy other images to `~/.t3/userdata/attachments` before you embed them. T3 does not show images from `/tmp`.
+For required review, capture the changed UI in the running app. Include the before and after states.
+Show the screenshots to the user and ask for approval after the change is complete.
+Do not enable auto-merge before the user approves the reviewed change.
+Record the approval in the PR description. Treat a missing required approval as a blocker.
+Request renewed approval if later changes materially alter the reviewed appearance.
+
+## Deployment and cleanup
+
+Vercel deploys each push to `main` through its Git integration. Do not deploy from an agent.
+Do not watch the deployment. Start cleanup as soon as the PR state is `MERGED`.
+Let GitHub delete the merged remote branch. Preserve thread history.
+Stop every dev server and preview process that you started before the final response.
+Create each temporary checkout, such as a visual review "before" state, with `git worktree add --detach` under `/tmp`.
+Remove a temporary checkout with `git worktree remove <path>` after checking for local files.
+After merge, run `pnpm worktree:cleanup . <pr-number> --branch-only --apply` in the task worktree, then call `unwatch_pull_request`.
+This verifies the merged PR, detaches the checkout, and deletes the local task branch.
+Keep the active T3 worktree and thread. Remove the worktree only after T3 stops.
+Run `pnpm worktree:cleanup <path> <pr-number> --apply` from another checkout to remove an idle worktree.
+Report cleanup in the final response only when it failed or is blocked.
+Never force worktree removal. Preserve uncommitted files, ignored files that are not build output, and commits that are absent from `origin/main`.
