@@ -180,14 +180,12 @@ export const renderCard = async (rankings: Ranking[], profiles: Profiles) => {
   const labelY = titleY + (title.lines.length - 1) * titleLine + 70;
   ctx.fillStyle = token("muted-foreground");
   ctx.font = `500 40px ${SANS}`;
-  ctx.fillText(
-    matchLabel(top.hits).replace("yours", "mine").replace("your", "my"),
-    PAD,
-    labelY,
-  );
+  const direct = top.hits.filter(({ similar }) => !similar);
+  const shown = direct.length ? direct : top.hits;
+  ctx.fillText(matchLabel(shown).replace("your", "my"), PAD, labelY);
   const chipY = labelY + 36;
   let chipX = PAD;
-  for (const { artist } of top.hits.slice(0, 4)) {
+  for (const { artist } of shown.slice(0, 4)) {
     ctx.font = `700 30px ${SANS}`;
     const chip = CHIP + ctx.measureText(artist).width + 44;
     if (chipX + chip > WIDTH - PAD) break;

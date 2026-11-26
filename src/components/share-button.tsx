@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Dialog } from "radix-ui";
 import { Check, Copy, Download, Link, Share, Share2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FacebookIcon, WhatsAppIcon, XIcon } from "@/components/brand-icons";
 import type { Ranking } from "@/match.ts";
 import { canShare, isTouch, renderCard, shareData } from "@/share.ts";
 import type { Profiles } from "@/spotify.ts";
@@ -55,9 +54,6 @@ export const ShareButton = ({ rankings, profiles }: ShareButtonProps) => {
   }, [rankings, profiles]);
 
   const data = card && shareData(card, rankings[0].station.name);
-  const text = encodeURIComponent(data?.text ?? "");
-  const url = encodeURIComponent(location.origin);
-  const message = encodeURIComponent(`${data?.text} ${location.origin}`);
   const share = () =>
     data &&
     (isTouch() && canShare(data)
@@ -90,7 +86,8 @@ export const ShareButton = ({ rankings, profiles }: ShareButtonProps) => {
               Share my results
             </Dialog.Title>
             <Dialog.Description className="mt-3 text-sm text-muted-foreground">
-              Copy or download the card. Then post it with the link.
+              Send the card with the site link. Your friends can then find their
+              own station.
             </Dialog.Description>
             {card && preview && (
               <div className="mt-6 grid gap-2">
@@ -117,25 +114,7 @@ export const ShareButton = ({ rankings, profiles }: ShareButtonProps) => {
                     )
                   }
                 >
-                  {copied === "link" ? "Copied" : "Copy link"}
-                </Action>
-                <Action
-                  icon={<XIcon />}
-                  href={`https://x.com/intent/post?text=${text}&url=${url}`}
-                >
-                  Post on X
-                </Action>
-                <Action
-                  icon={<WhatsAppIcon />}
-                  href={`https://wa.me/?text=${message}`}
-                >
-                  WhatsApp
-                </Action>
-                <Action
-                  icon={<FacebookIcon />}
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${url}`}
-                >
-                  Facebook
+                  {copied === "link" ? "Copied" : "Copy site link"}
                 </Action>
                 {data && canShare(data) && (
                   <Action
