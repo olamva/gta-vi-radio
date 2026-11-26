@@ -1,0 +1,13 @@
+{
+  "id": "a37c9611",
+  "ts": "2026-11-26T07:40:19+00:00",
+  "text": "vercel env add with value piped on stdin and a positional environment silently adds nothing; use --environment <env> --no-sensitive --yes",
+  "tags": [
+    "tools"
+  ],
+  "who": "agent",
+  "model": "claude-opus-5-5",
+  "session": "b81d6a6a",
+  "where": "vercel CLI 65.16.0",
+  "branch": "t3/weighted-radio-rankings"
+}
