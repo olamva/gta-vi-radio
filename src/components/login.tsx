@@ -18,7 +18,7 @@ export const Login = ({ error, onLogin }: LoginProps) => (
         <img src="/hero.webp" alt="" className="size-full object-cover" />
       </picture>
       <div className="absolute inset-0 -z-10 bg-linear-to-b from-background/40 via-background/55 to-background" />
-      <div className="mx-auto w-full max-w-6xl px-4 pt-32 pb-16 sm:px-6 sm:pb-24">
+      <div className="mx-auto w-full max-w-6xl px-4 pt-36 pb-16 sm:pt-48 sm:px-6 sm:pb-24">
         <h1 className="max-w-3xl font-display text-6xl leading-[0.85] font-black uppercase sm:text-8xl">
           Find your station
         </h1>

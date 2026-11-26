@@ -87,10 +87,10 @@ export const App = () => {
             <img
               src="/favicon.svg"
               alt="Grand Theft Auto VI"
-              className={state.status === "login" ? "h-16 sm:h-20" : "h-9"}
+              className={state.status === "login" ? "h-24 sm:h-32" : "h-9"}
             />
             <span
-              className={`font-display font-black uppercase ${state.status === "login" ? "text-2xl sm:text-3xl" : "text-xl"}`}
+              className={`font-display font-black uppercase ${state.status === "login" ? "text-3xl sm:text-5xl" : "text-xl"}`}
             >
               Radio Match
             </span>
