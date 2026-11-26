@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import test from "node:test";
-import { rankStations, weighHistory, type History } from "../src/match.ts";
+import {
+  matchLabel,
+  rankStations,
+  weighHistory,
+  type History,
+} from "../src/match.ts";
 import { STATIONS } from "../src/stations.ts";
 
 const station = (name: string, artists: string[], similar: string[] = []) => ({
@@ -50,6 +55,55 @@ test("a station artist outweighs a similar artist", () => {
   );
   assert.equal(first.station.name, "Direct");
   assert.ok(second.score > 0 && second.score < first.score);
+});
+
+test("hits rank artists by their discounted weight", () => {
+  const [ranking] = rankStations(
+    [
+      { artist: "Drake", weight: 5 },
+      { artist: "Kendrick Lamar", weight: 3 },
+      { artist: "Adele", weight: 9 },
+    ],
+    [station("Rap", ["Kendrick Lamar"], ["Drake"])],
+  );
+  assert.deepEqual(ranking.hits, [
+    { artist: "Kendrick Lamar", weight: 3, similar: false },
+    { artist: "Drake", weight: 2, similar: true },
+  ]);
+  assert.equal(ranking.score, 5);
+});
+
+test("hits merge listens for one artist across spellings", () => {
+  const [ranking] = rankStations(
+    [
+      { artist: "Beyoncé", weight: 1 },
+      { artist: "Beyonce", weight: 2 },
+    ],
+    [station("Pop", ["BEYONCÉ"])],
+  );
+  assert.deepEqual(ranking.hits, [
+    { artist: "Beyoncé", weight: 3, similar: false },
+  ]);
+});
+
+test("match labels count station and similar artists apart", () => {
+  const hit = (similar: boolean) => ({ artist: "", weight: 1, similar });
+  assert.deepEqual(
+    [
+      [hit(false), hit(false), hit(true)],
+      [hit(false)],
+      [hit(true)],
+      [hit(true), hit(true)],
+      [],
+    ].map(matchLabel),
+    [
+      "2 of your artists play here + 1 similar",
+      "1 of your artists plays here",
+      "1 of your artists sounds similar",
+      "2 of your artists sound similar",
+      "None of your artists play here",
+    ],
+  );
 });
 
 test("artist names match across spelling differences", () => {
