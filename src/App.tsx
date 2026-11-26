@@ -76,8 +76,14 @@ export const App = () => {
       <header className="absolute inset-x-0 top-0 z-10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
           <a href="/" className="flex items-center gap-3">
-            <img src="/favicon.svg" alt="Grand Theft Auto VI" className="h-9" />
-            <span className="font-display text-xl font-bold tracking-wide uppercase">
+            <img
+              src="/favicon.svg"
+              alt="Grand Theft Auto VI"
+              className={state.status === "login" ? "h-16 sm:h-20" : "h-9"}
+            />
+            <span
+              className={`font-display font-bold tracking-wide uppercase ${state.status === "login" ? "text-2xl sm:text-3xl" : "text-xl"}`}
+            >
               Radio Match
             </span>
           </a>
