@@ -3,8 +3,8 @@ import { matchLabel, type Ranking, type Station } from "@/match.ts";
 const WIDTH = 1080;
 const HEIGHT = 1350;
 const PAD = 80;
-const ART = 440;
-const SMALL_ART = 110;
+const ART = 480;
+const SMALL_ART = 124;
 const DISPLAY = "Archivo";
 const SANS = '"Helvetica Neue", Helvetica, Arial, sans-serif';
 
@@ -115,35 +115,49 @@ export const renderCard = async (rankings: Ranking[]) => {
   ctx.fillStyle = token("sunset");
   ctx.font = `700 48px ${DISPLAY}`;
   ctx.fillText("MY GTA VI STATION", PAD, 270);
-  await drawArt(ctx, top.station, PAD, 310, ART);
+  await drawArt(
+    ctx,
+    top.station,
+    runnersUp.length ? PAD : (WIDTH - ART) / 2,
+    310,
+    ART,
+  );
 
-  const column = PAD + ART + 48;
+  const column = PAD + ART + 40;
   if (runnersUp.length) {
     ctx.fillStyle = token("muted-foreground");
     ctx.font = `700 32px ${DISPLAY}`;
     ctx.fillText("ALSO ON MY DIAL", column, 345);
   }
   for (const [index, { station }] of runnersUp.entries()) {
-    const y = 380 + index * 130;
+    const y = 370 + index * 148;
     await drawArt(ctx, station, column, y, SMALL_ART);
     const x = column + SMALL_ART + 24;
+    const name = fit(ctx, station.name.toUpperCase(), WIDTH - PAD - x, 38, 2);
+    const offset = name.lines.length > 1 ? 20 : 0;
     ctx.fillStyle = station.color;
-    ctx.font = `700 28px ${DISPLAY}`;
-    ctx.fillText(`#${index + 2}`, x, y + 30);
+    ctx.font = `700 30px ${DISPLAY}`;
+    ctx.fillText(`#${index + 2}`, x, y + 48 - offset);
     ctx.fillStyle = token("foreground");
-    const name = fit(ctx, station.name.toUpperCase(), WIDTH - PAD - x, 34, 2);
-    drawLines(ctx, name.lines, x, y + 70, name.size);
+    ctx.font = `900 ${name.size}px ${DISPLAY}`;
+    drawLines(ctx, name.lines, x, y + 88 - offset, name.size);
   }
 
   const width = WIDTH - PAD * 2;
   ctx.fillStyle = token("foreground");
   const title = fit(ctx, top.station.name.toUpperCase(), width, 150, 2);
-  const titleY = 790 + title.size * 0.75;
-  drawLines(ctx, title.lines, PAD, titleY, title.size * 0.88);
-  const labelY = titleY + (title.lines.length - 1) * title.size * 0.88 + 70;
+  const titleLine = title.size * 0.88;
+  const block = title.size * 0.75 + (title.lines.length - 1) * titleLine + 134;
+  const titleY = 790 + (440 - block) / 2 + title.size * 0.75;
+  drawLines(ctx, title.lines, PAD, titleY, titleLine);
+  const labelY = titleY + (title.lines.length - 1) * titleLine + 70;
   ctx.fillStyle = token("muted-foreground");
   ctx.font = `500 40px ${SANS}`;
-  ctx.fillText(matchLabel(top.hits), PAD, labelY);
+  ctx.fillText(
+    matchLabel(top.hits).replace("yours", "mine").replace("your", "my"),
+    PAD,
+    labelY,
+  );
   ctx.fillStyle = token("foreground");
   const artists = fit(
     ctx,
@@ -159,12 +173,13 @@ export const renderCard = async (rankings: Ranking[]) => {
   );
   drawLines(ctx, artists.lines, PAD, labelY + 64, artists.size);
 
-  ctx.font = `700 36px ${DISPLAY}`;
-  ctx.fillStyle = token("muted-foreground");
-  ctx.fillText(location.host.toUpperCase(), PAD, HEIGHT - PAD);
+  ctx.font = `700 34px ${DISPLAY}`;
   ctx.fillStyle = token("sunset");
+  ctx.fillText("FIND YOUR STATION", PAD, HEIGHT - PAD);
+  ctx.font = `500 32px ${SANS}`;
+  ctx.fillStyle = token("muted-foreground");
   ctx.textAlign = "right";
-  ctx.fillText("FIND YOUR STATION", WIDTH - PAD, HEIGHT - PAD);
+  ctx.fillText(location.host, WIDTH - PAD, HEIGHT - PAD);
 
   const blob = await new Promise<Blob | null>((resolve) =>
     canvas.toBlob(resolve),
@@ -176,7 +191,7 @@ export const shareCard = async (file: File, station: string) => {
   const data = {
     files: [file],
     title: "GTA VI Radio Match",
-    text: `My GTA VI radio station is ${station}. Find yours:`,
+    text: `My GTA VI radio station is ${station}. Find yours.`,
     url: location.origin,
   };
   if (navigator.canShare?.(data))

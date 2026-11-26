@@ -267,11 +267,12 @@ export const Results = ({ rankings, profiles }: ResultsProps) => {
   }, [rankings]);
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-      {card && (
+      {matched.length > 0 && (
         <div className="flex justify-end">
           <Button
             variant="outline"
-            onClick={() => shareCard(card, matched[0].station.name)}
+            disabled={!card}
+            onClick={() => card && shareCard(card, matched[0].station.name)}
           >
             <Share2 />
             Share my results
