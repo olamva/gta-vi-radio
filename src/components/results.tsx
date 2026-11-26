@@ -1,6 +1,6 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { flushSync } from "react-dom";
-import { ChevronDown, Share2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -8,6 +8,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ProfileAvatar } from "@/components/profile-avatar";
+import { ShareButton } from "@/components/share-button";
 import { SpotifyIcon } from "@/components/spotify-icon";
 import { StationArt } from "@/components/station-art";
 import {
@@ -17,7 +18,6 @@ import {
   type Hit,
   type Ranking,
 } from "@/match.ts";
-import { renderCard, shareCard } from "@/share.ts";
 import type { Profiles } from "@/spotify.ts";
 
 interface ResultsProps {
@@ -253,25 +253,13 @@ const Row = ({ ranking, rank, profiles }: RowProps) => {
 
 export const Results = ({ rankings, profiles }: ResultsProps) => {
   const [expanded, setExpanded] = useState(false);
-  const [card, setCard] = useState<File>();
   const matched = rankings.filter(({ hits }) => hits.length);
   const visible = expanded ? rankings : matched;
-  useEffect(() => {
-    const hits = rankings.filter(({ hits }) => hits.length);
-    if (hits.length) renderCard(hits).then(setCard);
-  }, [rankings]);
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
       {matched.length > 0 && (
         <div className="flex justify-end">
-          <Button
-            variant="outline"
-            disabled={!card}
-            onClick={() => card && shareCard(card, matched[0].station.name)}
-          >
-            <Share2 />
-            Share my results
-          </Button>
+          <ShareButton rankings={rankings} profiles={profiles} />
         </div>
       )}
       {!matched.length && (

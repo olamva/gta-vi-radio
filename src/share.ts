@@ -1,10 +1,12 @@
-import { matchLabel, type Ranking, type Station } from "@/match.ts";
+import { matchLabel, normalize, type Ranking, type Station } from "@/match.ts";
+import type { Profiles } from "@/spotify.ts";
 
 const WIDTH = 1080;
 const HEIGHT = 1350;
 const PAD = 80;
 const ART = 480;
 const SMALL_ART = 124;
+const CHIP = 72;
 const DISPLAY = "Archivo";
 const SANS = '"Helvetica Neue", Helvetica, Arial, sans-serif';
 
@@ -17,6 +19,7 @@ const token = (name: string) =>
 
 const loadImage = async (src: string) => {
   const image = new Image();
+  image.crossOrigin = "anonymous";
   image.src = src;
   await image.decode();
   return image;
@@ -90,7 +93,25 @@ const drawArt = async (
   ctx.textAlign = "left";
 };
 
-export const renderCard = async (rankings: Ranking[]) => {
+const drawAvatar = async (
+  ctx: Context,
+  name: string,
+  image: string | undefined,
+  x: number,
+  y: number,
+) => {
+  const loaded = image && (await loadImage(image).catch(() => undefined));
+  if (loaded) return ctx.drawImage(loaded, x, y, CHIP, CHIP);
+  ctx.fillStyle = token("muted");
+  ctx.fillRect(x, y, CHIP, CHIP);
+  ctx.fillStyle = token("muted-foreground");
+  ctx.font = `600 30px ${SANS}`;
+  ctx.textAlign = "center";
+  ctx.fillText(name.slice(0, 1), x + CHIP / 2, y + CHIP / 2 + 11);
+  ctx.textAlign = "left";
+};
+
+export const renderCard = async (rankings: Ranking[], profiles: Profiles) => {
   await document.fonts.load(`900 100px ${DISPLAY}`);
   const canvas = document.createElement("canvas");
   canvas.width = WIDTH;
@@ -143,11 +164,17 @@ export const renderCard = async (rankings: Ranking[]) => {
     drawLines(ctx, name.lines, x, y + 88 - offset, name.size);
   }
 
-  const width = WIDTH - PAD * 2;
   ctx.fillStyle = token("foreground");
-  const title = fit(ctx, top.station.name.toUpperCase(), width, 150, 2);
+  const title = fit(
+    ctx,
+    top.station.name.toUpperCase(),
+    WIDTH - PAD * 2,
+    150,
+    2,
+  );
   const titleLine = title.size * 0.88;
-  const block = title.size * 0.75 + (title.lines.length - 1) * titleLine + 134;
+  const block =
+    title.size * 0.75 + (title.lines.length - 1) * titleLine + 106 + CHIP;
   const titleY = 790 + (440 - block) / 2 + title.size * 0.75;
   drawLines(ctx, title.lines, PAD, titleY, titleLine);
   const labelY = titleY + (title.lines.length - 1) * titleLine + 70;
@@ -158,20 +185,20 @@ export const renderCard = async (rankings: Ranking[]) => {
     PAD,
     labelY,
   );
-  ctx.fillStyle = token("foreground");
-  const artists = fit(
-    ctx,
-    top.hits
-      .slice(0, 3)
-      .map(({ artist }) => artist)
-      .join(" · "),
-    width,
-    40,
-    1,
-    700,
-    SANS,
-  );
-  drawLines(ctx, artists.lines, PAD, labelY + 64, artists.size);
+  const chipY = labelY + 36;
+  let chipX = PAD;
+  for (const { artist } of top.hits.slice(0, 4)) {
+    ctx.font = `700 30px ${SANS}`;
+    const chip = CHIP + ctx.measureText(artist).width + 44;
+    if (chipX + chip > WIDTH - PAD) break;
+    ctx.fillStyle = "#ffffff0d";
+    ctx.fillRect(chipX, chipY, chip, CHIP);
+    ctx.fillStyle = token("foreground");
+    ctx.fillText(artist, chipX + CHIP + 20, chipY + CHIP / 2 + 11);
+    const image = profiles.get(normalize(artist))?.image;
+    await drawAvatar(ctx, artist, image, chipX, chipY);
+    chipX += chip + 16;
+  }
 
   ctx.font = `700 34px ${DISPLAY}`;
   ctx.fillStyle = token("sunset");
@@ -187,18 +214,13 @@ export const renderCard = async (rankings: Ranking[]) => {
   return new File([blob!], "gta-vi-radio-match.png", { type: "image/png" });
 };
 
-export const shareCard = async (file: File, station: string) => {
-  const data = {
-    files: [file],
-    title: "GTA VI Radio Match",
-    text: `My GTA VI radio station is ${station}. Find yours.`,
-    url: location.origin,
-  };
-  if (navigator.canShare?.(data))
-    return navigator.share(data).catch(() => undefined);
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(file);
-  link.download = file.name;
-  link.click();
-  URL.revokeObjectURL(link.href);
-};
+export const shareData = (file: File, station: string) => ({
+  files: [file],
+  title: "GTA VI Radio Match",
+  text: `My GTA VI radio station is ${station}. Find yours.`,
+  url: location.origin,
+});
+
+export const canShare = (data: ShareData) => !!navigator.canShare?.(data);
+
+export const isTouch = () => matchMedia("(pointer: coarse)").matches;
